@@ -1,26 +1,26 @@
 /**
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * There are many other ways to style your app. For example, Nativewind, Tamagui, unistyles, etc.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = 'hsl(240 5.9% 10%)';  // votre "primary" clair
+const tintColorDark = 'hsl(0 0% 98%)';       // votre "primary" foncé
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text:      'hsl(240 10% 3.9%)',   // foreground
+    background:'hsl(0 0% 100%)',      // background
+    tint:       tintColorLight,       // accent / active icon
+    icon:      'hsl(240 5.9% 90%)',   // border / inactive icon
+    tabIconDefault:  'hsl(240 5.9% 90%)', // icône d’onglet inactif
+    tabIconSelected: tintColorLight,      // icône d’onglet actif
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text:      'hsl(0 0% 98%)',       // foreground
+    background:'hsl(240 10% 3.9%)',   // background
+    tint:       tintColorDark,        // accent / active icon
+    icon:      'hsl(240 3.7% 15.9%)', // border / inactive icon
+    tabIconDefault:  'hsl(240 3.7% 15.9%)', // icône d’onglet inactif
+    tabIconSelected: tintColorDark,       // icône d’onglet actif
   },
 };
