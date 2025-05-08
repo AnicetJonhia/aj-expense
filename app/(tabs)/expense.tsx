@@ -99,22 +99,23 @@ export default function ExpenseScreen() {
                       <DropdownMenu>
                             <DropdownMenuTrigger  asChild>
                               <TouchableOpacity >
-                                <Text className="text-xl text-gray-500">⋯</Text>
+                                <Text ><FontAwesome name="ellipsis-h" size={16} className="mr-2 " /></Text>
                               </TouchableOpacity>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent className="w-40">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuGroup>
-                                <DropdownMenuItem onSelect={() => console.log('Edit')}>
-                                  <FontAwesome name="edit" size={16} className="mr-2 text-gray-700" />
-                                  <Text className="text-gray-800">Edit</Text>
+                                <DropdownMenuItem onPress={handleUpdate}>
+                                  
+                                  <Text><FontAwesome name="edit" size={16} className="mr-2 " /></Text>
+                                  <Text>Edit</Text>
                                 </DropdownMenuItem>
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem onSelect={() => console.log('Delete')}>
-                                  <FontAwesome name="trash" size={16} className="mr-2 text-red-600" />
+                                <DropdownMenuItem onPress={() => deleteExpense(item?.id)}>
+                                  <Text><FontAwesome name="trash" size={16} className="mr-2" /></Text>
                                   <Text className="text-red-700">Delete</Text>
                                 </DropdownMenuItem>
                               </DropdownMenuGroup>
@@ -127,13 +128,8 @@ export default function ExpenseScreen() {
               )}
             />
 
-          <Button onPress={() => deleteExpense(items[0]?.id)} className="mt-4">
-          <Text>Delete the first expense</Text>
-          </Button>
-
-          <Button onPress={handleUpdate} className="mt-4">
-          <Text>Update the first expense</Text>
-          </Button>
+         
+         
         </>
       )}
     </View>
