@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
@@ -7,9 +8,28 @@ import { format } from 'date-fns';
 import { Link } from 'expo-router';
 import { useEffect } from 'react';
 import { FlatList, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { Pressable} from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ExpenseScreen() {
   const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
+
+
+  
+
 
   useEffect(() => {
     fetchExpenses();
@@ -23,6 +43,16 @@ export default function ExpenseScreen() {
         amount: 500,
       });
     }
+  };
+
+  const triggerRef =
+    React.useRef<React.ElementRef<typeof DropdownMenuTrigger>>(null);
+  const insets = useSafeAreaInsets();
+  const contentInsets = {
+    top: insets.top,
+    bottom: insets.bottom,
+    left: 12,
+    right: 12,
   };
 
   return (
@@ -54,7 +84,7 @@ export default function ExpenseScreen() {
                   
                       <View className="flex-1 justify-center">
                        
-                        <View className="flex-row justify-between items-center">
+                        <View className="flex-row justify-between  items-center">
                           <Text className="font-medium">
                             {item.title}{' '}
                             <Text className="text-gray-500">({item.category})</Text>
@@ -71,7 +101,36 @@ export default function ExpenseScreen() {
 
              
                       <View className="ml-4 justify-center items-center">
-                        <Text className="text-xl text-gray-500">⋯</Text>
+                      <Pressable
+                          className="absolute top-0 right-0 w-16 h-16 active:bg-primary/5"
+                          onPress={() => {
+                            triggerRef.current?.open();
+                          }}
+                        />
+                      <DropdownMenu>
+                            <DropdownMenuTrigger ref={triggerRef}  asChild>
+                              <TouchableOpacity onPress={() => console.log('Pressed')}>
+                                <Text className="text-xl text-gray-500">⋯</Text>
+                              </TouchableOpacity>
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent className="w-40">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuGroup>
+                                <DropdownMenuItem onSelect={() => console.log('Edit')}>
+                                  <FontAwesome name="edit" size={16} className="mr-2 text-gray-700" />
+                                  <Text className="text-gray-800">Edit</Text>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuItem onSelect={() => console.log('Delete')}>
+                                  <FontAwesome name="trash" size={16} className="mr-2 text-red-600" />
+                                  <Text className="text-red-700">Delete</Text>
+                                </DropdownMenuItem>
+                              </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                       </View>
                     </View>
                   </CardContent>
