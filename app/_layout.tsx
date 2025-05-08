@@ -4,9 +4,12 @@ import * as React from 'react';
 import { Text } from '@/components/ui/text';
 import { ThemeProvider } from "@/hooks/ThemeProvider";
 import { HeaderRight } from "@/components/HeaderRight";
-import '@/global.css'
+import { View, useWindowDimensions } from 'react-native';
+import '@/global.css';
 
 export default function RootLayout() {
+  const { width } = useWindowDimensions();
+
   return (
     <ThemeProvider>
       <StatusBar />
@@ -14,8 +17,22 @@ export default function RootLayout() {
         <Stack.Screen
           name="(tabs)"
           options={{
-            headerTitle: () => <Text  style={{ fontSize: 18, fontWeight: 'bold' }}>AJExpense</Text>,
-            headerRight: () => <HeaderRight />,
+            headerTitle: () => (
+              <View style={{ maxWidth: width - 120 }}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{ fontSize: 18, fontWeight: 'bold' }}
+                >
+                  AJExpense
+                </Text>
+              </View>
+            ),
+            headerRight: () => (
+              <View style={{ paddingRight: 10 }}>
+                <HeaderRight />
+              </View>
+            ),
           }}
         />
         <Stack.Screen name="+not-found" />

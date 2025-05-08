@@ -20,7 +20,7 @@ export function HeaderRight() {
     };
 
   return (
-    <Pressable onPress={toggleColorScheme} style={{ padding: 10 }}>
+    <Pressable onPress={toggleColorScheme} >
       <FontAwesome color={tintColor} name={isDark ? 'sun-o' : 'moon-o'} size={20} />
     </Pressable>
   );
