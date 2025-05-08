@@ -8,8 +8,7 @@ import {
 import { useColorScheme as RNUseColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-DefaultTheme.colors.background = "white";
-DarkTheme.colors.background = "#09090B";
+
 
 export const ThemeProvider = ({ children }: PropsWithChildren) => {
   const [loaded, setLoaded] = useState(false);
