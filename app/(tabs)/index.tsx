@@ -1,10 +1,80 @@
-import { View } from 'react-native';
-import {Text} from "@/components/ui/text"
+import * as React from 'react';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Text } from '@/components/ui/text';
 
-export default function HomeScreen() {
+function HomeScreen() {
+
   return (
-    <View className="flex-1 items-center justify-center dark:bg-black">
-      <Text className="text-xl font-bold">Welcome </Text>
-    </View>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button >
+            <Text>Open</Text>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className='w-64 native:w-72'>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Text>Team</Text>
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Text>Invite users</Text>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <Animated.View entering={FadeIn.duration(200)}>
+                  <DropdownMenuItem>
+                    <Text>Email</Text>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Text>Message</Text>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Text>More...</Text>
+                  </DropdownMenuItem>
+                </Animated.View>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuItem>
+              <Text>New Team</Text>
+              <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Text>GitHub</Text>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Text>Support</Text>
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            <Text>API</Text>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Text>Log out</Text>
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
   );
 }
+
+
+export default HomeScreen;

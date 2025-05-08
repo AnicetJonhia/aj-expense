@@ -6,7 +6,7 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { format } from 'date-fns';
 import { Link } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect , useState} from 'react';
 import { FlatList, View } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { Pressable} from "react-native";
@@ -28,6 +28,8 @@ export default function ExpenseScreen() {
   const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
 
 
+
+
   
 
 
@@ -45,15 +47,7 @@ export default function ExpenseScreen() {
     }
   };
 
-  const triggerRef =
-    React.useRef<React.ElementRef<typeof DropdownMenuTrigger>>(null);
-  const insets = useSafeAreaInsets();
-  const contentInsets = {
-    top: insets.top,
-    bottom: insets.bottom,
-    left: 12,
-    right: 12,
-  };
+  
 
   return (
     <View className="flex-1 p-4 bg-white dark:bg-black">
@@ -101,15 +95,10 @@ export default function ExpenseScreen() {
 
              
                       <View className="ml-4 justify-center items-center">
-                      <Pressable
-                          className="absolute top-0 right-0 w-16 h-16 active:bg-primary/5"
-                          onPress={() => {
-                            triggerRef.current?.open();
-                          }}
-                        />
+                      
                       <DropdownMenu>
-                            <DropdownMenuTrigger ref={triggerRef}  asChild>
-                              <TouchableOpacity onPress={() => console.log('Pressed')}>
+                            <DropdownMenuTrigger  asChild>
+                              <TouchableOpacity >
                                 <Text className="text-xl text-gray-500">⋯</Text>
                               </TouchableOpacity>
                             </DropdownMenuTrigger>

@@ -7,6 +7,7 @@ import { HeaderRight } from "@/components/HeaderRight";
 import { View, useWindowDimensions } from 'react-native';
 import '@/global.css';
 import Toast from 'react-native-toast-message';
+import { PortalHost } from '@rn-primitives/portal';
 
 
 export default function RootLayout() {
@@ -39,6 +40,7 @@ export default function RootLayout() {
 
         <Stack.Screen name="+not-found" />
       </Stack>
+      <PortalHost />
       <Toast  />
 
     </ThemeProvider>
