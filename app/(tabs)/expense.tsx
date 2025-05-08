@@ -9,9 +9,8 @@ import { Link } from 'expo-router';
 import { useEffect , useState} from 'react';
 import { FlatList, View } from 'react-native';
 import { TouchableOpacity } from 'react-native';
-import { Pressable} from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
+
 
 
 import {
@@ -27,7 +26,7 @@ import {
 export default function ExpenseScreen() {
   const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
 
-
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
 
   
@@ -72,6 +71,8 @@ export default function ExpenseScreen() {
               data={items}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
+
+                <>
                 <Card className="mb-4">
                   <CardContent className="py-3 px-4">
                     <View className="flex-row justify-between items-center">
@@ -114,22 +115,35 @@ export default function ExpenseScreen() {
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem onPress={() => deleteExpense(item?.id)}>
+                                <DropdownMenuItem onPress={() => setSelectedItemId(item.id)}>
                                   <Text><FontAwesome name="trash" size={16} className="mr-2" /></Text>
                                   <Text className="text-red-700">Delete</Text>
                                 </DropdownMenuItem>
                               </DropdownMenuGroup>
                             </DropdownMenuContent>
                           </DropdownMenu>
+                          
                       </View>
                     </View>
                   </CardContent>
                 </Card>
+                <ExpenseDeleteDialog
+                  isOpen={selectedItemId !== null}
+                  setIsOpen={(open) => !open ? setSelectedItemId(null) : null}
+                  onConfirm={() => {
+                    if (selectedItemId !== null) {
+                      deleteExpense(selectedItemId);
+                      setSelectedItemId(null);
+                    }
+                  }}
+                />
+
+                </>
               )}
             />
 
          
-         
+        
         </>
       )}
     </View>
