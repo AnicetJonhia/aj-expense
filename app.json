@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "aj-expense",
-    "slug": "aj-expense",
+    "name": "AJExpense",
+    "slug": "AJExpense",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

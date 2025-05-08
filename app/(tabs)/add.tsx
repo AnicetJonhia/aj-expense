@@ -13,6 +13,10 @@ import {
 } from '@/components/ui/card';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useColorScheme } from 'nativewind';
+import { Colors } from '@/constants/Colors';
 
 export default function AddScreen() {
   const { addExpense } = useExpenseStore();
@@ -22,6 +26,8 @@ export default function AddScreen() {
     category: '',
   });
   const [amountError, setAmountError] = useState('');
+  const { colorScheme } = useColorScheme();
+  const iconColor = Colors[colorScheme ?? 'dark'].tint;
 
   const handleChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -49,7 +55,32 @@ export default function AddScreen() {
       date: new Date().toISOString(),
     });
 
-    setForm({ title: '', amount: '', category: '' });
+
+    try {
+      await addExpense({
+        title: form.title,
+        amount: Number(form.amount),
+        category: form.category,
+        date: new Date().toISOString(),
+      });
+    
+      setForm({ title: '', amount: '', category: '' });
+    
+      Toast.show({
+        type: 'success',
+        text1: 'Expense added',
+        text2: 'Your expense was successfully recorded.',
+      });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An error occurred while adding the expense.',
+      });
+    }
+    
+
+    
     setAmountError('');
   };
 
@@ -109,11 +140,16 @@ export default function AddScreen() {
         </CardContent>
 
         <CardFooter >
-          <Button onPress={handleAdd} disabled={!isFormValid} className={`w-full ${!isFormValid ? 'opacity-70' : ''}`}>
-            <Text className="text-center w-full">Add</Text>
+          <Button onPress={handleAdd} disabled={!isFormValid} className={`w-full justify-center items-center  ${!isFormValid ? 'opacity-70' : ''}`}>
+            
+          <View className="flex flex-row items-center gap-2">
+            <Text><FontAwesome name="plus" size={16} /></Text>
+            <Text>Add</Text>
+          </View>
           </Button>
         </CardFooter>
       </Card>
+      
     </View>
   );
 }
