@@ -26,7 +26,8 @@ import {
 export default function ExpenseScreen() {
   const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
 
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ id: number; title: string } | null>(null);
+
 
 
   
@@ -80,18 +81,28 @@ export default function ExpenseScreen() {
                       <View className="flex-1 justify-center">
                        
                         <View className="flex-row justify-between  items-center">
-                          <Text className="font-medium">
-                            {item.title}{' '}
-                            <Text className="text-gray-500">({item.category})</Text>
-                          </Text>
-                          <Text className="text-sm text-gray-400 ml-auto justify-center items-center">
-                            {format(new Date(item.date), 'PPP')}
-                          </Text>
+                          <View className="flex-col items-start">
+                              <Text className="font-medium">
+                                {item.title}
+                                
+                              </Text>
+                              <Text className="text-lg font-bold text-primary ">
+                                {item.amount} Ar
+                              </Text>
+                          </View>
+                          <View className="flex-col items-end">
+                              <Text className="text-gray-500">{item.category}</Text>
+                              <Text className="text-sm text-gray-400  justify-center items-center">
+                                {format(new Date(item.date), 'PPP')}
+                              </Text>
+                          </View>
+
+                         
                         </View>
-              
-                        <Text className="text-lg font-bold text-primary mt-1">
-                          {item.amount} Ar
-                        </Text>
+
+
+                      
+                       
                       </View>
 
              
@@ -115,7 +126,7 @@ export default function ExpenseScreen() {
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem onPress={() => setSelectedItemId(item.id)}>
+                                <DropdownMenuItem onPress={() => setSelectedItem({ id: item.id, title: item.title })}>
                                   <Text><FontAwesome name="trash" size={16} className="mr-2" /></Text>
                                   <Text className="text-red-700">Delete</Text>
                                 </DropdownMenuItem>
@@ -127,16 +138,18 @@ export default function ExpenseScreen() {
                     </View>
                   </CardContent>
                 </Card>
-                <ExpenseDeleteDialog
-                  isOpen={selectedItemId !== null}
-                  setIsOpen={(open) => !open ? setSelectedItemId(null) : null}
-                  onConfirm={() => {
-                    if (selectedItemId !== null) {
-                      deleteExpense(selectedItemId);
-                      setSelectedItemId(null);
-                    }
-                  }}
-                />
+                {selectedItem && (
+                  <ExpenseDeleteDialog
+                    isOpen={!!selectedItem}
+                    setIsOpen={(open) => !open && setSelectedItem(null)}
+                    onConfirm={() => {
+                      deleteExpense(selectedItem.id);
+                      setSelectedItem(null);
+                    }}
+                    itemTitle={selectedItem.title}
+                  />
+                )}
+
 
                 </>
               )}
