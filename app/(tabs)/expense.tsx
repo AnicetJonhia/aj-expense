@@ -10,6 +10,8 @@ import { useEffect , useState} from 'react';
 import { FlatList, View } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
+import Toast from 'react-native-toast-message';
+import ExpenseEditDialog from "@/components/ExpenseEditDialog";
 
 
 
@@ -23,10 +25,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+type Expense = {
+  id: number;
+  title: string;
+  amount: number;
+  category: string;
+  date: string;
+};
+
 export default function ExpenseScreen() {
   const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
 
   const [selectedItem, setSelectedItem] = useState<{ id: number; title: string } | null>(null);
+  const [selectedExpenseForEdit, setSelectedExpenseForEdit] = useState<Expense | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+
+
 
 
 
@@ -118,7 +132,11 @@ export default function ExpenseScreen() {
                             <DropdownMenuContent className="w-40">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DropdownMenuGroup>
-                                <DropdownMenuItem onPress={handleUpdate}>
+                                <DropdownMenuItem onPress={() => {
+                                    setSelectedExpenseForEdit(item);
+                                    setIsEditOpen(true);
+                                  }}>
+
                                   
                                   <Text><FontAwesome name="edit" size={16} className="mr-2 " /></Text>
                                   <Text>Edit</Text>
@@ -138,17 +156,42 @@ export default function ExpenseScreen() {
                     </View>
                   </CardContent>
                 </Card>
+
                 {selectedItem && (
                   <ExpenseDeleteDialog
                     isOpen={!!selectedItem}
                     setIsOpen={(open) => !open && setSelectedItem(null)}
-                    onConfirm={() => {
-                      deleteExpense(selectedItem.id);
-                      setSelectedItem(null);
+                    onConfirm={async () => {
+                      if (selectedItem) {
+                        await deleteExpense(selectedItem.id);
+                        setSelectedItem(null);
+                        Toast.show({
+                          type: 'success',
+                          text1: 'Expense deleted',
+                          text2: 'Your expense was successfully removed.',
+                        });
+                      }
                     }}
-                    itemTitle={selectedItem.title}
+                    itemTitle={selectedItem?.title || ''}
                   />
                 )}
+
+                {selectedExpenseForEdit && (
+                  <ExpenseEditDialog
+                    isOpen={isEditOpen}
+                    setIsOpen={(open) => {
+                      if (!open) {
+                        setIsEditOpen(false);
+                        setSelectedExpenseForEdit(null);
+                      }
+                    }}
+                    expense={selectedExpenseForEdit}
+                  />
+                )}
+
+
+                
+
 
 
                 </>
