@@ -15,8 +15,7 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import Toast from 'react-native-toast-message';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useColorScheme } from 'nativewind';
-import { Colors } from '@/constants/Colors';
+
 
 export default function AddScreen() {
   const { addExpense } = useExpenseStore();
@@ -26,8 +25,8 @@ export default function AddScreen() {
     category: '',
   });
   const [amountError, setAmountError] = useState('');
-  const { colorScheme } = useColorScheme();
-  const iconColor = Colors[colorScheme ?? 'dark'].tint;
+
+
 
   const handleChange = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -48,12 +47,7 @@ export default function AddScreen() {
       return;
     }
 
-    await addExpense({
-      title: form.title,
-      amount: Number(form.amount),
-      category: form.category,
-      date: new Date().toISOString(),
-    });
+    
 
 
     try {

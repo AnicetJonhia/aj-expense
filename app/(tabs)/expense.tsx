@@ -1,11 +1,15 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useExpenseStore } from '@/store/useExpenseStore';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { format } from 'date-fns';
+import { Link } from 'expo-router';
 import { useEffect } from 'react';
 import { FlatList, View } from 'react-native';
 
 export default function ExpenseScreen() {
-  const { items, fetchExpenses, deleteExpense , updateExpense} = useExpenseStore();
+  const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
 
   useEffect(() => {
     fetchExpenses();
@@ -21,26 +25,69 @@ export default function ExpenseScreen() {
     }
   };
 
-
   return (
     <View className="flex-1 p-4 bg-white dark:bg-black">
-      <Text className="text-xl font-bold mb-4">Mes Dépenses</Text>
+      <Text className="text-xl font-bold mb-4">My Expenses</Text>
 
-      <FlatList
-        data={items}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Text className="text-base">{item.title} - {item.amount} Ar</Text>
-        )}
-      />
+      {items.length === 0 ? (
+        <View
+          className="flex-1 justify-center items-center border border-dashed border-gray-400 rounded-md p-4 my-4"
+        >
+          <Text className="text-center text-gray-500 dark:text-gray-400">
+          No expenses for now.
+          
+          </Text>
+          <Link href="/add" className="text-blue-500">
+          Add Expense <FontAwesome name="clipboard" size={16} className="ml-2" /> 
 
-      <Button onPress={() => deleteExpense(items[0]?.id)}>
-        <Text>Supprimer la première dépense</Text>
-      </Button>
-      
-      <Button className='mt-4' onPress={handleUpdate}>
-        <Text>Mettre à jour la première</Text>
-      </Button>
+          </Link>
+        </View>
+      ) : (
+        <>
+          <FlatList
+              data={items}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <Card className="mb-4">
+                  <CardContent className="py-3 px-4">
+                    <View className="flex-row justify-between items-center">
+                  
+                      <View className="flex-1 justify-center">
+                       
+                        <View className="flex-row justify-between items-center">
+                          <Text className="font-medium">
+                            {item.title}{' '}
+                            <Text className="text-gray-500">({item.category})</Text>
+                          </Text>
+                          <Text className="text-sm text-gray-400 ml-auto justify-center items-center">
+                            {format(new Date(item.date), 'PPP')}
+                          </Text>
+                        </View>
+              
+                        <Text className="text-lg font-bold text-primary mt-1">
+                          {item.amount} Ar
+                        </Text>
+                      </View>
+
+             
+                      <View className="ml-4 justify-center items-center">
+                        <Text className="text-xl text-gray-500">⋯</Text>
+                      </View>
+                    </View>
+                  </CardContent>
+                </Card>
+              )}
+            />
+
+          <Button onPress={() => deleteExpense(items[0]?.id)} className="mt-4">
+          <Text>Delete the first expense</Text>
+          </Button>
+
+          <Button onPress={handleUpdate} className="mt-4">
+          <Text>Update the first expense</Text>
+          </Button>
+        </>
+      )}
     </View>
   );
 }
