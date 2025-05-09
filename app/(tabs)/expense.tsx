@@ -51,15 +51,7 @@ export default function ExpenseScreen() {
     fetchExpenses();
   }, []);
 
-  const handleUpdate = async () => {
-    const first = items[0];
-    if (first) {
-      await updateExpense(first.id, {
-        title: 'Café amélioré',
-        amount: 500,
-      });
-    }
-  };
+  
 
   
 
@@ -107,8 +99,12 @@ export default function ExpenseScreen() {
                           <View className="flex-col items-end">
                               <Text className="text-gray-500">{item.category}</Text>
                               <Text className="text-sm text-gray-400  justify-center items-center">
-                                {format(new Date(item.date), 'PPP')}
-                              </Text>
+                                  {(() => {
+                                    const parsedDate = new Date(item.date);
+                                    return !isNaN(parsedDate.getTime()) ? format(parsedDate, 'PPP') : 'Invalid date';
+                                  })()}
+                                </Text>
+
                           </View>
 
                          

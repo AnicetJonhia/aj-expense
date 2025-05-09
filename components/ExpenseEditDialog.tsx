@@ -14,6 +14,7 @@ import { Text } from '@/components/ui/text';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { DatePicker } from './ui/DatePicker';
 
 type ExpenseEditDialogProps = {
   isOpen: boolean;
@@ -38,10 +39,14 @@ export default function ExpenseEditDialog({
     title: expense.title,
     amount: String(expense.amount),
     category: expense.category,
-    date: expense.date,
+    date: expense.date ? new Date(expense.date) : new Date(),
+
   });
 
-  const handleChange = (key: string, value: string) => {
+  const [showDatePicker, setShowDatePicker] = React.useState<boolean>(false);
+
+
+  const handleChange = (key: string, value: string | Date) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -60,6 +65,7 @@ export default function ExpenseEditDialog({
     await updateExpense(expense.id, {
       ...form,
       amount: Number(form.amount),
+      date: form.date.toISOString(),
     });
 
     Toast.show({
@@ -111,12 +117,28 @@ export default function ExpenseEditDialog({
 
           <View>
             <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              value={form.date}
-              onChangeText={(text) => handleChange('date', text)}
-              placeholder="YYYY-MM-DD"
-            />
+            <Button variant="outline" onPress={() => setShowDatePicker(true)}>
+                <Text>{form.date.toDateString()}</Text>
+            </Button>
+
+            {showDatePicker && (
+                <DatePicker
+                value={form.date}
+                mode="date"
+                onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (selectedDate) {
+                      const updatedDate = new Date(form.date);
+                      updatedDate.setFullYear(selectedDate.getFullYear());
+                      updatedDate.setMonth(selectedDate.getMonth());
+                      updatedDate.setDate(selectedDate.getDate());
+                      handleChange('date', updatedDate);
+                    }
+                  }}
+                  
+                display="default"
+                />
+            )}
           </View>
         </View>
 

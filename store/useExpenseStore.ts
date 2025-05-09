@@ -40,9 +40,22 @@ export const useExpenseStore = create<ExpenseStore>((set) => ({
     set({ items: updated });
   },
   updateExpense: async (id, updatedData) => {
-    await db.update(expenses).set(updatedData).where(eq(expenses.id,id)).run();
+  
+    const existing = await db.select().from(expenses).where(eq(expenses.id, id)).get();
+  
+    if (!existing) return;
+
+    const dataToUpdate = {
+      ...existing,
+      ...updatedData,
+    };
+  
+
+    await db.update(expenses).set(dataToUpdate).where(eq(expenses.id, id)).run();
+
     const updated = await db.select().from(expenses).all();
     set({ items: updated });
   },
+  
   
 }));
