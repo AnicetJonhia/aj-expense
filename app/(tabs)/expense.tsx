@@ -1,18 +1,21 @@
 import * as React from "react";
-import { Button } from '@/components/ui/button';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 import { format } from 'date-fns';
-import { Link } from 'expo-router';
+
 import { useEffect , useState} from 'react';
-import { FlatList, View } from 'react-native';
-import { TouchableOpacity } from 'react-native';
+import { FlatList, View ,TouchableOpacity } from 'react-native';
+
+import ExpenseListHeader from "@/components/ExpenseListHeader";
 import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
 import Toast from 'react-native-toast-message';
 import ExpenseEditDialog from "@/components/ExpenseEditDialog";
-
+import MissingExpense from "@/components/MissingExpense";
+import {Input} from "@/components/ui/input"
 
 
 import {
@@ -34,8 +37,8 @@ type Expense = {
 };
 
 export default function ExpenseScreen() {
-  const { items, fetchExpenses, deleteExpense, updateExpense } = useExpenseStore();
-
+  const { items, fetchExpenses, deleteExpense } = useExpenseStore();
+  const [searchText, setSearchText] = useState<string>('');
   const [selectedItem, setSelectedItem] = useState<{ id: number; title: string } | null>(null);
   const [selectedExpenseForEdit, setSelectedExpenseForEdit] = useState<Expense | null>(null);
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
@@ -51,36 +54,45 @@ export default function ExpenseScreen() {
     fetchExpenses();
   }, []);
 
-  
+  const filteredItems = items.filter(item =>
+    item.title.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   
 
   return (
-    <View className="flex-1 p-4 bg-white dark:bg-black">
-      <Text className="text-xl font-bold mb-4">My Expenses</Text>
+    <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
+      
+      <ExpenseListHeader/>
+      <View >
+           
+            <View className="relative w-full">
+            <Input
+              id="filter"
+              placeholder="Search..."
+              className="pr-10" 
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+            <View className="absolute right-3 top-1/2 -translate-y-1/2">
+              <Text>
+                    <FontAwesome name="search-minus" size={24} />
+                  </Text>
+            </View>
+          </View>
+          </View>
 
-      {items.length === 0 ? (
-        <View
-          className="flex-1 justify-center items-center border border-dashed border-gray-400 rounded-md p-4 my-4"
-        >
-          <Text className="text-center text-gray-500 dark:text-gray-400">
-          No expenses for now.
-          
-          </Text>
-          <Link href="/add" className="text-blue-500">
-          Add Expense <FontAwesome name="clipboard" size={16} className="ml-2" /> 
-
-          </Link>
-        </View>
+      {filteredItems.length === 0 ? (
+        <MissingExpense />
       ) : (
         <>
           <FlatList
-              data={items}
+              data={filteredItems}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
 
                 <>
-                <Card className="mb-4">
+                <Card className="mb-2">
                   <CardContent className="py-3 px-4">
                     <View className="flex-row justify-between items-center">
                   

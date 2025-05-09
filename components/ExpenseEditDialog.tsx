@@ -135,7 +135,7 @@ export default function ExpenseEditDialog({
                       handleChange('date', updatedDate);
                     }
                   }}
-                  
+                  locale="en"
                 display="default"
                 />
             )}
