@@ -9,7 +9,7 @@ import {Button} from '@/components/ui/button'
 
 export default function ExpenseListHeader () {
     return  (
-        <View className="flex flex-row items-center ">
+        <View className="flex flex-row items-center border-b pb-2 ">
             <Text className="text-xl font-bold">My Expenses</Text>
             <Link href="/add" asChild  className="ml-auto">
                 <Button>
