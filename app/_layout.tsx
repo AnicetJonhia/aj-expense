@@ -4,14 +4,14 @@ import * as React from 'react';
 import { Text } from '@/components/ui/text';
 import { ThemeProvider } from "@/hooks/ThemeProvider";
 import { HeaderRight } from "@/components/HeaderRight";
-import { View, useWindowDimensions } from 'react-native';
+import { View } from 'react-native';
 import '@/global.css';
 import Toast from 'react-native-toast-message';
 import { PortalHost } from '@rn-primitives/portal';
 
 
 export default function RootLayout() {
-  const { width } = useWindowDimensions();
+
 
   return (
     <ThemeProvider>

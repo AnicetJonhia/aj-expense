@@ -64,7 +64,7 @@ const [showPicker, setShowPicker] = useState<boolean>(false);
   ? filteredItems.filter((item) => {
       const parsedDate = new Date(item.date);
 
-      
+   
       return (
         !isNaN(parsedDate.getTime()) &&
         parsedDate.getFullYear() === selectedDate.getFullYear() &&
