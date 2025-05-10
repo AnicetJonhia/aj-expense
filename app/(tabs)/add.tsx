@@ -89,20 +89,20 @@ export default function AddScreen() {
 
         <CardContent className="space-y-3">
           <View>
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">Title: </Label>
             <Input
               id="title"
-              placeholder="Ex: Café"
+              placeholder="Ex: Tesla"
               value={form.title}
               onChangeText={(text) => handleChange('title', text)}
             />
           </View>
 
           <View>
-            <Label htmlFor="amount">Amount</Label>
+            <Label htmlFor="amount">Amount(Ar):</Label>
             <Input
               id="amount"
-              placeholder="Ex: 500"
+              placeholder="Ex: 17 000 000 000"
               keyboardType="numeric"
               value={form.amount}
               onChangeText={(text) => handleChange('amount', text)}
@@ -123,10 +123,10 @@ export default function AddScreen() {
           </View>
 
           <View>
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">Category:</Label>
             <Input
               id="category"
-              placeholder="Ex: Boisson"
+              placeholder="Ex: Car Payment"
               value={form.category}
               onChangeText={(text) => handleChange('category', text)}
             />
