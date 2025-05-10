@@ -76,12 +76,7 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
   const dateFilteredItems = selectedDate
   ? filteredItems.filter((item) => {
       const parsedDate = new Date(item.date);
-      console.log("********")
-      console.log("Item date:", item.date);
-      console.log("Parsed date:", parsedDate);
-      console.log("Year:", year, "Parsed Year:", parsedDate.getFullYear());
-      console.log("Month:", month, "Parsed Month:", parsedDate.getMonth() );
-      console.log("Day:", day, "Parsed Day:", parsedDate.getDate());
+      
 
       if (isNaN(parsedDate.getTime())) return false;
 
@@ -145,7 +140,10 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
                 </Button>
 
                 {selectedDate && (
-                  <TouchableOpacity className="ml-1" onPress={() => setSelectedDate('')}>
+                  <TouchableOpacity className="ml-1" onPress={() => {
+                    setSelectedDate('');
+                    setIsOpen(false);
+                  }}>
                     <FontAwesome name="times-circle" size={20} color="gray" />
                   </TouchableOpacity>
                 )}
@@ -154,7 +152,7 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
             </View>
           </View>
 
-        {filteredItems.length === 0 ? (
+        {dateFilteredItems.length === 0 ? (
           <MissingExpense />
         ) : (
           <>
@@ -271,19 +269,19 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
                   )}
 
                                 
-                <DateFilterDialog
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        handleDateChange={handleDateChange}
-                      />
+                
 
 
                   </>
                 )}
               />
 
-          
-          
+        <DateFilterDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            handleDateChange={handleDateChange}
+          />
+
           </>
         )}
       </View>
