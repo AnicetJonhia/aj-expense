@@ -29,18 +29,20 @@ function formatDate(dateString: string) {
   }
 
 
-
-function extractDateParts(dateString: string): { year: number; month?: number; day?: number } {
-    const parts = dateString.split('-').map(part => parseInt(part, 10));
+  function extractDateParts(dateStr: string): {
+    year?: number;
+    month?: number;
+    day?: number;
+  } {
+    const parts = dateStr.split('-');
+    const year = parts[0] ? Number(parts[0]) : undefined;
+    const month = parts[1] ? Number(parts[1]) - 1 : undefined; // JS month starts from 0
+    const day = parts[2] ? Number(parts[2]) : undefined;
   
-    const [year, month, day] = parts;
-  
-    return {
-      year,
-      ...(month && { month }),
-      ...(day && { day }),
-    };
+    return { year, month, day };
   }
+
+
 
 
 export {formatDate,extractDateParts};

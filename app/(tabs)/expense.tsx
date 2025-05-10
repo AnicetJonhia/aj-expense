@@ -8,7 +8,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { format } from 'date-fns';
 
 import { useEffect , useState} from 'react';
-import { FlatList, View ,TouchableOpacity ,Keyboard , Modal, Pressable, TouchableWithoutFeedback} from 'react-native';
+import { FlatList, View ,TouchableOpacity ,Keyboard } from 'react-native';
 
 import ExpenseListHeader from "@/components/ExpenseListHeader";
 import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
@@ -16,11 +16,10 @@ import Toast from 'react-native-toast-message';
 import ExpenseEditDialog from "@/components/ExpenseEditDialog";
 import MissingExpense from "@/components/MissingExpense";
 import {Input} from "@/components/ui/input"
-import { DatePicker } from '@/components/ui/DatePicker';
+import DateFilterDialog from '@/components/DateFilterDialog';
 import {Button} from "@/components/ui/button"
 
 
-import DateFilter from '@/components/DateFilter';
 import { formatDate, extractDateParts } from "@/utils/formatDate";
 
 
@@ -51,7 +50,8 @@ export default function ExpenseScreen() {
   
 
 const [selectedDate, setSelectedDate] = useState<string>('');
-  const [modalVisible, setModalVisible] = useState(false);
+const [isOpen, setIsOpen] = useState<boolean>(false);
+  
 
   
 
@@ -76,15 +76,25 @@ const [selectedDate, setSelectedDate] = useState<string>('');
   const dateFilteredItems = selectedDate
   ? filteredItems.filter((item) => {
       const parsedDate = new Date(item.date);
+      console.log("********")
+      console.log("Item date:", item.date);
+      console.log("Parsed date:", parsedDate);
+      console.log("Year:", year, "Parsed Year:", parsedDate.getFullYear());
+      console.log("Month:", month, "Parsed Month:", parsedDate.getMonth() );
+      console.log("Day:", day, "Parsed Day:", parsedDate.getDate());
+
+      if (isNaN(parsedDate.getTime())) return false;
+
+      if (year && parsedDate.getFullYear() !== year) return false;
+      if (month  && parsedDate.getMonth() !== month) return false;
+      if (day  && parsedDate.getDate() !== day) return false;
       
-      return (
-        !isNaN(parsedDate.getTime()) &&
-        parsedDate.getFullYear() === year &&
-        parsedDate.getMonth() === month &&
-        parsedDate.getDate() === day
-      );
+
+      return true;
     })
   : filteredItems;
+
+
 
 
   
@@ -126,7 +136,7 @@ const [selectedDate, setSelectedDate] = useState<string>('');
             <View className="ml-auto">
             <View className="flex-row items-center space-x-2 ">
                 <Button variant = "outline"
-                  onPress={() => setModalVisible(true)}
+                  onPress={() => setIsOpen(true)}
                   
                 >
                   <Text className="text-sm">
@@ -261,30 +271,11 @@ const [selectedDate, setSelectedDate] = useState<string>('');
                   )}
 
                                 
-              < Modal
-                  visible={modalVisible}
-                  transparent
-                  animationType="fade"
-                  
-                >
-                  
-                    <View className="flex-1 justify-center items-center px-4">
-                      <TouchableWithoutFeedback onPress={() => {}}>
-                        <View className="w-full max-w-md max-h-[80%] rounded-xl bg-white dark:bg-[#1E1E1E] p-4">
-                          
-                    
-                          <View className="items-end">
-                            <Pressable onPress={() => setModalVisible(false)}>
-                              <FontAwesome name="times-circle" size={30} color="gray" />
-                            </Pressable>
-                          </View>
-
-                          <DateFilter onDateChange={handleDateChange} />
-                        </View>
-                      </TouchableWithoutFeedback>
-                    </View>
-                  
-                </Modal>
+                <DateFilterDialog
+                        isOpen={isOpen}
+                        setIsOpen={setIsOpen}
+                        handleDateChange={handleDateChange}
+                      />
 
 
                   </>
