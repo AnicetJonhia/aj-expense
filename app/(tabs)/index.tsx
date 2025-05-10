@@ -12,9 +12,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Text } from '@/components/ui/text';
-import { Combobox } from '@/components/ui/combobox';
+import DateFilter from '@/components/DateFilter';
 import {View} from 'react-native'
-
+import { formatDate } from "@/utils/formatDate";
 
 const frameworks = [
   { label: 'Next.js', value: 'next.js' },
@@ -24,27 +24,29 @@ const frameworks = [
   { label: 'Astro', value: 'astro' },
 ];
 export default function Example() {
-  const [selected, setSelected] = useState(null);
+ 
+  const [selectedDate, setSelectedDate] = useState<string>('');
+ 
+  
+    const handleDateChange = (date: string) => {
+      setSelectedDate(date);
+    };
   return (
       <Dialog>
         <DialogTrigger asChild>
           <Button variant='outline'>
-            <Text>Edit Profile</Text>
+            <Text>
+          {selectedDate ? formatDate(selectedDate) : 'Filter'}</Text>
           </Button>
         </DialogTrigger>
-        <DialogContent className='sm:max-w-[425px]'>
+        <DialogContent className="max-w-fit p-6">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-            <View className="flex-1 justify-center px-6">
-                <Combobox
-                  items={frameworks}
-                  selectedItem={selected}
-                  onSelectedItemChange={setSelected}
-                  placeholder="Select a framework"
-                />
-              </View>
-            </DialogDescription>
+            <DialogTitle>Expense Filtration</DialogTitle>
+            
+          
+            <DateFilter onDateChange={handleDateChange} />
+              
+           
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>

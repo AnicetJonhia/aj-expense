@@ -1,93 +1,51 @@
 import React, { useState } from 'react';
-import { View} from 'react-native';
-import {Text} from "@/components/ui/text"
-import { Combobox } from '@/components/ui/combobox'; 
+import { View, Text, Modal, Pressable, TouchableWithoutFeedback } from 'react-native';
+import DateFilter from '@/components/DateFilter';
+import { formatDate, extractDateParts } from "@/utils/formatDate";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+export default function MainScreen() {
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState(false);
 
-const years = Array.from({ length: 5 }, (_, i) => {
-  const year = new Date().getFullYear() - i;
-  return { value: `${year}`, label: `${year}` };
-});
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+  };
 
-const months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-].map((m, i) => ({
-  value: `${i + 1}`.padStart(2, '0'),
-  label: m,
-}));
-
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
-}
-
-export default function DateSelectorScreen() {
-  const [selectedYear, setSelectedYear] = useState<{ value: string; label: string } | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<{ value: string; label: string } | null>(null);
-  const [selectedDay, setSelectedDay] = useState<{ value: string; label: string } | null>(null);
-
-  const days =
-    selectedYear && selectedMonth
-      ? Array.from({ length: getDaysInMonth(Number(selectedYear.value), Number(selectedMonth.value)) }, (_, i) => ({
-          value: `${i + 1}`.padStart(2, '0'),
-          label: `${i + 1}`,
-        }))
-      : [];
-
-  const result = selectedYear
-    ? selectedMonth
-      ? selectedDay
-        ? `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`
-        : `${selectedYear.value}-${selectedMonth.value}`
-      : `${selectedYear.value}`
-    : '';
+  const { year, month, day } = extractDateParts(selectedDate);
 
   return (
-    <View className="flex-1 justify-center px-6 space-y-6">
-      <Text className="font-medium text-gray-700 dark:text-gray-200">Select Date :</Text>
+    <View className="flex-1 px-6 py-6 gap-4">
+      <Pressable onPress={() => setModalVisible(true)}>
+        <Text className="text-blue-600 underline">
+          {selectedDate ? formatDate(selectedDate) : 'Filter'}
+        </Text>
+      </Pressable>
 
-      <View className="flex-row gap-2">
-        <View className="flex-1">
-          <Combobox 
-            items={years}
-            selectedItem={selectedYear}
-            onSelectedItemChange={(val) => {
-              setSelectedYear(val);
-              setSelectedMonth(null);
-              setSelectedDay(null);
-            }}
-            placeholder="Year"
-          />
-        </View>
-        {selectedYear && (
-          <View className="flex-1">
-          <Combobox
-            items={months}
-            selectedItem={selectedMonth}
-            onSelectedItemChange={(val) => {
-              setSelectedMonth(val);
-              setSelectedDay(null);
-            }}
-            placeholder="Month"
-          />
-        </View>
-        )}
-        {selectedMonth && (
-          <View className="flex-1">
-          <Combobox
-            items={days}
-            selectedItem={selectedDay}
-            onSelectedItemChange={setSelectedDay}
-            placeholder="Day"
-          />
-        </View>
-        )}
-      </View>
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View className="flex-1 justify-center items-center px-4">
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View className="w-full max-w-md max-h-[80%] rounded-xl bg-white dark:bg-[#1E1E1E] p-4">
+                
+           
+                <View className="items-end">
+                  <Pressable onPress={() => setModalVisible(false)}>
+                    <FontAwesome name="times-circle" size={30} color="gray" />
+                  </Pressable>
+                </View>
 
-      <Text className="text-center mt-6 text-lg font-semibold text-gray-800 dark:text-white">
-        {result || 'Select a date'}
-      </Text>
-</View>
-
+                <DateFilter onDateChange={handleDateChange} />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </View>
   );
 }

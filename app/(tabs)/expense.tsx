@@ -8,7 +8,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { format } from 'date-fns';
 
 import { useEffect , useState} from 'react';
-import { FlatList, View ,TouchableOpacity ,Keyboard } from 'react-native';
+import { FlatList, View ,TouchableOpacity ,Keyboard , Modal, Pressable, TouchableWithoutFeedback} from 'react-native';
 
 import ExpenseListHeader from "@/components/ExpenseListHeader";
 import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
@@ -17,6 +17,12 @@ import ExpenseEditDialog from "@/components/ExpenseEditDialog";
 import MissingExpense from "@/components/MissingExpense";
 import {Input} from "@/components/ui/input"
 import { DatePicker } from '@/components/ui/DatePicker';
+import {Button} from "@/components/ui/button"
+
+
+import DateFilter from '@/components/DateFilter';
+import { formatDate, extractDateParts } from "@/utils/formatDate";
+
 
 import {
   DropdownMenu,
@@ -42,11 +48,12 @@ export default function ExpenseScreen() {
   const [selectedItem, setSelectedItem] = useState<{ id: number; title: string } | null>(null);
   const [selectedExpenseForEdit, setSelectedExpenseForEdit] = useState<Expense | null>(null);
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-const [showPicker, setShowPicker] = useState<boolean>(false);
+  
 
+const [selectedDate, setSelectedDate] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState(false);
 
-
+  
 
 
   
@@ -60,16 +67,21 @@ const [showPicker, setShowPicker] = useState<boolean>(false);
     item.title.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+  };
+
+  const { year, month, day } = extractDateParts(selectedDate);
+
   const dateFilteredItems = selectedDate
   ? filteredItems.filter((item) => {
       const parsedDate = new Date(item.date);
-
-   
+      
       return (
         !isNaN(parsedDate.getTime()) &&
-        parsedDate.getFullYear() === selectedDate.getFullYear() &&
-        parsedDate.getMonth() === selectedDate.getMonth() &&
-        parsedDate.getDate() === selectedDate.getDate()
+        parsedDate.getFullYear() === year &&
+        parsedDate.getMonth() === month &&
+        parsedDate.getDate() === day
       );
     })
   : filteredItems;
@@ -82,7 +94,7 @@ const [showPicker, setShowPicker] = useState<boolean>(false);
       <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
         
         <ExpenseListHeader/>
-        <View className="flex flex-row justify-center gap-2">
+        <View className="flex flex-row  gap-2">
             
         <View className="relative flex-1">
           <Input
@@ -93,7 +105,7 @@ const [showPicker, setShowPicker] = useState<boolean>(false);
             onChangeText={setSearchText}
           />
           
-          {/* Clear icon */}
+    
           {searchText.length > 0 ? (
             <TouchableOpacity
               onPress={() => {
@@ -112,18 +124,18 @@ const [showPicker, setShowPicker] = useState<boolean>(false);
         </View>
 
             <View className="ml-auto">
-            <View className="flex-row items-center space-x-2 mt-2">
-                <TouchableOpacity
-                  onPress={() => setShowPicker(true)}
-                  className="bg-gray-200 dark:bg-gray-800 rounded px-4 py-2"
+            <View className="flex-row items-center space-x-2 ">
+                <Button variant = "outline"
+                  onPress={() => setModalVisible(true)}
+                  
                 >
                   <Text className="text-sm">
-                    {selectedDate ? format(selectedDate, 'PPP') : 'Filter'}
+                    {selectedDate ? formatDate(selectedDate) : 'Filter'}
                   </Text>
-                </TouchableOpacity>
+                </Button>
 
                 {selectedDate && (
-                  <TouchableOpacity onPress={() => setSelectedDate(null)}>
+                  <TouchableOpacity className="ml-1" onPress={() => setSelectedDate('')}>
                     <FontAwesome name="times-circle" size={20} color="gray" />
                   </TouchableOpacity>
                 )}
@@ -248,21 +260,31 @@ const [showPicker, setShowPicker] = useState<boolean>(false);
                     />
                   )}
 
-                {showPicker && (
-                  <DatePicker
-                    value={selectedDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, date) => {
-                      setShowPicker(false);
-                      if (date) setSelectedDate(date);
-                    }}
-                  />
-                )}
-
-
+                                
+              < Modal
+                  visible={modalVisible}
+                  transparent
+                  animationType="fade"
                   
+                >
+                  
+                    <View className="flex-1 justify-center items-center px-4">
+                      <TouchableWithoutFeedback onPress={() => {}}>
+                        <View className="w-full max-w-md max-h-[80%] rounded-xl bg-white dark:bg-[#1E1E1E] p-4">
+                          
+                    
+                          <View className="items-end">
+                            <Pressable onPress={() => setModalVisible(false)}>
+                              <FontAwesome name="times-circle" size={30} color="gray" />
+                            </Pressable>
+                          </View>
 
+                          <DateFilter onDateChange={handleDateChange} />
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </View>
+                  
+                </Modal>
 
 
                   </>
