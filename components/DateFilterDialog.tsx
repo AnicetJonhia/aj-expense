@@ -7,7 +7,7 @@ import DateFilter from '@/components/DateFilter';
 interface DateFilterDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  handleDateChange: (date: string) => void;
+  handleDateChange: (params: { date?: string; category?: string }) => void;
 }
 
 export default function DateFilterDialog({
