@@ -7,7 +7,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 import { format } from 'date-fns';
 
-import { useEffect , useState} from 'react';
+import { useEffect , useState, useMemo} from 'react';
 import { FlatList, View ,TouchableOpacity ,Keyboard } from 'react-native';
 
 import ExpenseListHeader from "@/components/ExpenseListHeader";
@@ -51,7 +51,8 @@ export default function ExpenseScreen() {
 
 const [selectedDate, setSelectedDate] = useState<string>('');
 const [isOpen, setIsOpen] = useState<boolean>(false);
-  
+const [selectedCategory, setSelectedCategory] = useState<string>('');
+
 
   
 
@@ -67,14 +68,21 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
     item.title.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const handleDateChange = (date: string) => {
-    setSelectedDate(date);
-  };
+  
 
+  const handleDateChange = ({ date, category }: { date: string; category: string }) => {
+    setSelectedDate(date);
+    setSelectedCategory(category);
+  };
+  
   const { year, month, day } = extractDateParts(selectedDate);
 
+  const categoryFilteredItems = selectedCategory
+  ? filteredItems.filter(item => item.category === selectedCategory)
+  : filteredItems;
+
   const dateFilteredItems = selectedDate
-  ? filteredItems.filter((item) => {
+  ? categoryFilteredItems.filter((item) => {
       const parsedDate = new Date(item.date);
       
 
@@ -87,11 +95,15 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
 
       return true;
     })
-  : filteredItems;
+  : categoryFilteredItems;
 
 
 
 
+  const sortedItems = useMemo(
+    () => [...dateFilteredItems].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [dateFilteredItems]
+  );
   
 
   return (
@@ -135,18 +147,27 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
                   
                 >
                   <Text className="text-sm">
-                    {selectedDate ? formatDate(selectedDate) : 'Filter'}
-                  </Text>
+                {selectedDate && selectedCategory
+                  ? `${formatDate(selectedDate)} - ${selectedCategory}`
+                  : selectedDate
+                  ? formatDate(selectedDate)
+                  : selectedCategory
+                  ? selectedCategory
+                  : 'Filter'}
+              </Text>
+
                 </Button>
 
-                {selectedDate && (
-                  <TouchableOpacity className="ml-1" onPress={() => {
-                    setSelectedDate('');
-                    setIsOpen(false);
-                  }}>
-                    <FontAwesome name="times-circle" size={20} color="gray" />
-                  </TouchableOpacity>
-                )}
+                {(selectedDate || selectedCategory) && (
+                    <TouchableOpacity className="ml-1" onPress={() => {
+                      setSelectedDate('');
+                      setSelectedCategory('');
+                      setIsOpen(false);
+                    }}>
+                      <FontAwesome name="times-circle" size={20} color="gray" />
+                    </TouchableOpacity>
+                  )}
+
               </View>
 
             </View>
@@ -158,7 +179,7 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
           <>
             <FlatList
                 keyboardShouldPersistTaps="handled"
-                data={dateFilteredItems}
+                data={sortedItems}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
 

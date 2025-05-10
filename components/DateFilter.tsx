@@ -4,6 +4,7 @@ import { Text } from "@/components/ui/text"
 import { Combobox } from '@/components/ui/combobox';
 import { Label } from "@/components/ui/label"
 import { Switch } from '@/components/ui/switch';
+import { useExpenseStore } from '@/store/useExpenseStore';
 
 const years = Array.from({ length: 5 }, (_, i) => {
   const year = new Date().getFullYear() - i;
@@ -23,21 +24,28 @@ function getDaysInMonth(year: number, month: number) {
 }
 
 interface DateFilterProps {
-  onDateChange: (date: string) => void;
+  onDateChange: (filters: { date?: string; category?: string }) => void;
 }
 
 export default function DateFilter({ onDateChange }: DateFilterProps) {
+
   const [selectedYear, setSelectedYear] = useState<{ value: string; label: string } | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<{ value: string; label: string } | null>(null);
   const [selectedDay, setSelectedDay] = useState<{ value: string; label: string } | null>(null);
   const [checked, setChecked] = useState<boolean>(true);
+  const [selectedCategory, setSelectedCategory] = useState<{ value: string; label: string } | null>(null);
+  const { items, } = useExpenseStore();
+
+  const categories = Array.from(new Set(items.map(item => item.category)))
+  .map((cat) => ({ value: cat ,label: cat}));
+
 
   useEffect(() => {
     if (checked) {
       setSelectedYear(null);
       setSelectedMonth(null);
       setSelectedDay(null);
-      onDateChange('')
+      onDateChange({ date: '', category: '' });
       
     }
   }, [checked, onDateChange]);
@@ -58,11 +66,15 @@ export default function DateFilter({ onDateChange }: DateFilterProps) {
       : `${selectedYear.value}`
     : '';
 
-  useEffect(() => {
-    if (result) {
-      onDateChange(result); 
-    }
-  }, [result, onDateChange]);
+    useEffect(() => {
+      if (!checked) {
+        onDateChange({
+          date: result || '',
+          category: selectedCategory?.value || '',
+        });
+      }
+    }, [result, selectedCategory, checked, onDateChange]);
+    
 
   return (
     <View className=" gap-2">
@@ -76,7 +88,23 @@ export default function DateFilter({ onDateChange }: DateFilterProps) {
         </View>
       </View>
 
-      <Text className="font-medium text-gray-700 dark:text-gray-200">Select Date :</Text>
+      <Text className="font-medium  text-gray-700 dark:text-gray-200">Filter per category :</Text>
+   
+      <View className="justify-center gap-2 mb-2">
+      <Combobox 
+          items={categories}
+          selectedItem={selectedCategory}
+          onSelectedItemChange={(val) => {
+            setSelectedCategory(val);
+            setChecked(false); 
+          }}
+          placeholder="Select Category"
+        />
+
+    
+      </View>
+
+      <Text className="font-medium text-gray-700 dark:text-gray-200">Filter per Date :</Text>
 
       <View className="flex-row gap-2">
         <View className="flex-1">
@@ -89,7 +117,7 @@ export default function DateFilter({ onDateChange }: DateFilterProps) {
               setSelectedDay(null);
               setChecked(false);
             }}
-            placeholder="Year"
+            placeholder="Select Year"
           />
         </View>
         {selectedYear && (
