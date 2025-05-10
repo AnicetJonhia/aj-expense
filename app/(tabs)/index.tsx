@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import { format } from 'date-fns';
 import { Combobox } from '@/components/ui/combobox';
+import {Text} from "@/components/ui/text";
 
 type ComboboxItem = {
   value: string;
