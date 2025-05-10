@@ -1,29 +1,10 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
-import { formatDate } from '@/utils/formatDate';
-import DateFilterDialog from '@/components/DateFilterDialog';
+import { View } from 'react-native';
+import {Text} from "@/components/ui/text"
 
-export default function Example() {
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleDateChange = (date: string) => {
-    setSelectedDate(date);
-  };
-
+export default function HomeScreen() {
   return (
-    <>
-      <Button onPress={() => setIsOpen(true)}>
-        <Text>{selectedDate ? formatDate(selectedDate) : 'Filter'}</Text>
-      </Button>
-
-      <DateFilterDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        handleDateChange={handleDateChange}
-      />
-    </>
+    <View className="flex-1 items-center justify-center dark:bg-black">
+      <Text className="text-xl font-bold">Welcome </Text>
+    </View>
   );
 }

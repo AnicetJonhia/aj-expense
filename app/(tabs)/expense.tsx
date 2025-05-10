@@ -276,14 +276,15 @@ const [isOpen, setIsOpen] = useState<boolean>(false);
                 )}
               />
 
+        
+
+          </>
+        )}
         <DateFilterDialog
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             handleDateChange={handleDateChange}
           />
-
-          </>
-        )}
       </View>
  
   );
