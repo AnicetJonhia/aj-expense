@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Pressable, FlatList, Keyboard } from 'react-native';
+import { View, Pressable, FlatList} from 'react-native';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
 import { Check } from '@/lib/icons/Check';

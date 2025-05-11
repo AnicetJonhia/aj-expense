@@ -1,149 +1,185 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
-import { Text } from "@/components/ui/text"
+import { Text } from '@/components/ui/text';
 import { Combobox } from '@/components/ui/combobox';
-import { Label } from "@/components/ui/label"
+import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useExpenseStore } from '@/store/useExpenseStore';
-
-const years = Array.from({ length: 5 }, (_, i) => {
-  const year = new Date().getFullYear() - i;
-  return { value: `${year}`, label: `${year}` };
-});
-
-const months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-].map((m, i) => ({
-  value: `${i + 1}`.padStart(2, '0'),
-  label: m,
-}));
-
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
-}
+import { format } from 'date-fns';
 
 interface DateFilterProps {
   onDateChange: (filters: { date?: string; category?: string }) => void;
 }
 
 export default function DateFilter({ onDateChange }: DateFilterProps) {
+  const { items, fetchExpenses } = useExpenseStore();
 
-  const [selectedYear, setSelectedYear] = useState<{ value: string; label: string } | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<{ value: string; label: string } | null>(null);
-  const [selectedDay, setSelectedDay] = useState<{ value: string; label: string } | null>(null);
-  const [checked, setChecked] = useState<boolean>(true);
-  const [selectedCategory, setSelectedCategory] = useState<{ value: string; label: string } | null>(null);
-  const { items } = useExpenseStore();
+  // ---------------------------------------------------
+  // états locaux
+  // ---------------------------------------------------
+  const [checked, setChecked] = useState(true); // “All” mode
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [year, setYear] = useState<string>('all');
+  const [month, setMonth] = useState<string | null>(null);
+  const [day, setDay] = useState<string | null>(null);
 
-  const categories = Array.from(new Set(items.map(item => item.category)))
-  .map((cat) => ({ value: cat ,label: cat}));
+  // ---------------------------------------------------
+  // on récupère d’abord la liste des dépenses
+  // ---------------------------------------------------
+  useEffect(() => {
+    fetchExpenses();
+  }, [fetchExpenses]);
 
+  // ---------------------------------------------------
+  // calcul dynamique des listes
+  // ---------------------------------------------------
+  const years = useMemo(() => {
+    const setY = new Set(items.map(i => new Date(i.date).getFullYear()));
+    return [
+      { label: 'All Years', value: 'all' },
+      ...[...setY]
+        .sort((a, b) => b - a)
+        .map(y => ({ label: String(y), value: String(y) }))
+    ];
+  }, [items]);
 
+  const months = useMemo(() => {
+    if (year === 'all') return [];
+    const setM = new Set(
+      items
+        .filter(i => new Date(i.date).getFullYear() === Number(year))
+        .map(i => new Date(i.date).getMonth() +1 )
+    );
+    return [...setM]
+      .sort((a, b) => a - b)
+      .map(m => ({
+        label: format(new Date(Number(year),m - 1, 1), 'MMMM'),
+        value: String(m),
+      }));
+  }, [items, year]);
+
+  const days = useMemo(() => {
+    if (year === 'all' || month == null) return [];
+    const m0 = Number(month) - 1; // 0-based
+    const setD = new Set(
+      items
+        .filter(i => {
+          const d = new Date(i.date);
+          return d.getFullYear() === Number(year) && d.getMonth() === m0;
+        })
+        .map(i => new Date(i.date).getDate())
+    );
+    return [...setD]
+      .sort((a, b) => a - b)
+      .map(dy => ({ value: String(dy).padStart(2, '0'), label: String(dy) }));
+  }, [items, year, month]);
+  
+
+  // ---------------------------------------------------
+  // résultat date “YYYY[-MM[-DD]]”
+  // ---------------------------------------------------
+  const dateString = useMemo(() => {
+    if (year === 'all') return '';
+    if (!month) return year;
+    if (!day) return `${year}-${month.padStart(2, '0')}`;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }, [year, month, day]);
+
+  // ---------------------------------------------------
+  // callback vers le parent
+  // ---------------------------------------------------
   useEffect(() => {
     if (checked) {
-      setSelectedYear(null);
-      setSelectedMonth(null);
-      setSelectedDay(null);
+      // mode “All”
       onDateChange({ date: '', category: '' });
-      
+    } else {
+      onDateChange({
+        date: dateString,
+        category: selectedCategory || '',
+      });
     }
-  }, [checked, onDateChange]);
+  }, [checked, dateString, selectedCategory, onDateChange]);
 
-  const days =
-    selectedYear && selectedMonth
-      ? Array.from({ length: getDaysInMonth(Number(selectedYear.value), Number(selectedMonth.value)) }, (_, i) => ({
-          value: `${i + 1}`.padStart(2, '0'),
-          label: `${i + 1}`,
-        }))
-      : [];
-
-  const result = selectedYear
-    ? selectedMonth
-      ? selectedDay
-        ? `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`
-        : `${selectedYear.value}-${selectedMonth.value}`
-      : `${selectedYear.value}`
-    : '';
-
-    useEffect(() => {
-      if (!checked) {
-        onDateChange({
-          date: result || '',
-          category: selectedCategory?.value || '',
-        });
-      }
-    }, [result, selectedCategory, checked, onDateChange]);
-    
-
+  // ---------------------------------------------------
+  // rendu
+  // ---------------------------------------------------
   return (
-    <View className=" gap-2">
-      <Text className="font-medium  text-gray-700 dark:text-gray-200">Default filter :</Text>
-      <View className='justify-center gap-2 mb-2'>
-        <View className='flex-row items-center gap-2'>
-          <Switch checked={checked} onCheckedChange={setChecked} nativeID='all' />
-          <Label nativeID='all' onPress={() => setChecked((prev) => !prev)}>
-            All
-          </Label>
-        </View>
+    <View className="space-y-4">
+      {/* switch “All” */}
+      <View className="flex-row items-center gap-2">
+        <Switch checked={checked} onCheckedChange={setChecked} nativeID="all" />
+        <Label nativeID="all" onPress={() => setChecked(prev => !prev)}>
+          All
+        </Label>
       </View>
 
-      <Text className="font-medium  text-gray-700 dark:text-gray-200">Filter per category :</Text>
-   
-      <View className="justify-center gap-2 mb-2">
-      <Combobox 
-          items={categories}
-          selectedItem={selectedCategory}
-          onSelectedItemChange={(val) => {
-            setSelectedCategory(val);
-            setChecked(false); 
-          }}
-          placeholder="Select Category"
-        />
+      {/* catégorie */}
+      <Label>Filter by category:</Label>
+      <Combobox
+        items={Array.from(new Set(items.map(i => i.category))).map(cat => ({
+          label: cat,
+          value: cat,
+        }))}
+        selectedItem={
+          selectedCategory
+            ? { label: selectedCategory, value: selectedCategory }
+            : null
+        }
+        onSelectedItemChange={opt => {
+          setSelectedCategory(opt.value);
+          setChecked(false);
+        }}
+        placeholder="Select category"
+      />
 
-    
-      </View>
-
-      <Text className="font-medium text-gray-700 dark:text-gray-200">Filter per Date :</Text>
-
+      {/* date */}
+      <Label>Filter by date:</Label>
       <View className="flex-row gap-2">
+        {/* année */}
         <View className="flex-1">
-          <Combobox 
+          <Combobox
             items={years}
-            selectedItem={selectedYear}
-            onSelectedItemChange={(val) => {
-              setSelectedYear(val);
-              setSelectedMonth(null);
-              setSelectedDay(null);
+            selectedItem={years.find(y => y.value === year) || null}
+            onSelectedItemChange={opt => {
+              setYear(opt.value);
+              setMonth(null);
+              setDay(null);
               setChecked(false);
             }}
-            placeholder="Select Year"
+            placeholder="Year"
+            
           />
         </View>
-        {selectedYear && (
+
+        {/* mois */}
+        {year !== 'all' && (
           <View className="flex-1">
             <Combobox
               items={months}
-              selectedItem={selectedMonth}
-              onSelectedItemChange={(val) => {
-                setSelectedMonth(val);
-                setSelectedDay(null);
+              selectedItem={months.find(m => m.value === month) || null}
+              onSelectedItemChange={opt => {
+                setMonth(opt.value);
+                setDay(null);
                 setChecked(false);
               }}
               placeholder="Month"
+              disabled={checked}
             />
           </View>
         )}
-        {selectedMonth && (
+
+        {/* jour */}
+        {month != null && (
           <View className="flex-1">
             <Combobox
               items={days}
-              selectedItem={selectedDay}
-              onSelectedItemChange={(val) => {
-                setSelectedDay(val);
+              selectedItem={days.find(d => d.value === day) || null}
+              onSelectedItemChange={opt => {
+                setDay(opt.value);
                 setChecked(false);
               }}
               placeholder="Day"
+              disabled={checked}
             />
           </View>
         )}
