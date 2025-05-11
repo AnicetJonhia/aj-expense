@@ -179,6 +179,7 @@ const [selectedCategory, setSelectedCategory] = useState<string>('');
           <>
             <FlatList
                 keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
                 data={sortedItems}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (

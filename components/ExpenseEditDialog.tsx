@@ -141,7 +141,7 @@ export default function ExpenseEditDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-screen max-w-screen-md sm:max-w-screen-sm p-4">
         <DialogHeader>
           <DialogTitle>Edit Expense</DialogTitle>
           <DialogDescription>

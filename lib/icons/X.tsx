@@ -3,5 +3,5 @@ import {Text} from "@/components/ui/text"
 
 
 export function X(props) {
-    return <Text><FontAwesome name="check" {...props} /></Text>;
+    return <Text><FontAwesome name="times-circle"  {...props} /></Text>;
   }

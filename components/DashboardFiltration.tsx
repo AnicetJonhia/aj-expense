@@ -5,13 +5,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import { format } from 'date-fns';
 import { Combobox } from '@/components/ui/combobox';
-import { Button } from '@/components/ui/button';
+
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function DashboardFiltration() {
   const { items, fetchExpenses } = useExpenseStore();
 
-  // États pour la filtration
+
   const [year, setYear] = useState<string>('all');
   const [month, setMonth] = useState<string | null>(null);
   const [day, setDay] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function DashboardFiltration() {
     fetchExpenses();
   }, []);
 
-  // 1) Liste des années dispo + option "all"
+
   const years = useMemo(() => {
     const setY = new Set(items.map(i => new Date(i.date).getFullYear()));
     return [{ label: 'All Years', value: 'all' } as any].concat(
@@ -28,7 +28,7 @@ export default function DashboardFiltration() {
     );
   }, [items]);
 
-  // 2) Total annuel (all ou sélection)
+
   const totalYear = useMemo(() => {
     return items.reduce((sum, i) => {
       const d = new Date(i.date);
@@ -38,7 +38,7 @@ export default function DashboardFiltration() {
     }, 0);
   }, [items, year]);
 
-  // 3) Liste des mois dispo dans l’année
+  
   const months = useMemo(() => {
     if (year === 'all') return [];
     const setM = new Set(
@@ -54,7 +54,7 @@ export default function DashboardFiltration() {
       }));
   }, [items, year]);
 
-  // 4) Total mensuel
+
   const totalMonth = useMemo(() => {
     if (year === 'all' || month == null) return 0;
     return items.reduce((sum, i) => {
@@ -65,7 +65,7 @@ export default function DashboardFiltration() {
     }, 0);
   }, [items, year, month]);
 
-  // 5) Liste des jours dispo dans mois/année
+
   const days = useMemo(() => {
     if (year === 'all' || month == null) return [];
     const setD = new Set(
@@ -81,7 +81,7 @@ export default function DashboardFiltration() {
       .map(dy => ({ label: String(dy), value: String(dy) }));
   }, [items, year, month]);
 
-  // 6) Total journalier
+
   const totalDay = useMemo(() => {
     if (year === 'all' || month == null || day == null) return 0;
     return items.reduce((sum, i) => {
@@ -100,7 +100,7 @@ export default function DashboardFiltration() {
     <>
     <Text className="text-2xl font-bold mb-4">Filtration</Text>
   
-    {/* Ligne Year */}
+
     <View className="mb-4">
       <Text className="text-sm mb-1 text-gray-600 dark:text-gray-400">Year</Text>
       <Combobox
@@ -126,10 +126,11 @@ export default function DashboardFiltration() {
       </Card>
     </View>
   
-    {/* Ligne Month et Day */}
+
     <View className="mb-10 flex-row gap-2">
-      {/* Month */}
-      <View className="flex-1">
+
+      {(year && year !== 'all') &&(
+        <View className="flex-1">
         <Text className="text-sm mb-1 text-gray-600 dark:text-gray-400">Month</Text>
         <Combobox
           items={months}
@@ -153,9 +154,11 @@ export default function DashboardFiltration() {
           </CardContent>
         </Card>
       </View>
+      )}
   
-      {/* Day */}
-      <View className="flex-1">
+
+      {month && (
+        <View className="flex-1">
         <Text className="text-sm mb-1 text-gray-600 dark:text-gray-400">Day</Text>
         <Combobox
           items={days}
@@ -178,6 +181,7 @@ export default function DashboardFiltration() {
           </CardContent>
         </Card>
       </View>
+      )}
     </View>
   </>
   

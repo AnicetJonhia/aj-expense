@@ -34,7 +34,7 @@ export default function DateFilter({ onDateChange }: DateFilterProps) {
   const [selectedDay, setSelectedDay] = useState<{ value: string; label: string } | null>(null);
   const [checked, setChecked] = useState<boolean>(true);
   const [selectedCategory, setSelectedCategory] = useState<{ value: string; label: string } | null>(null);
-  const { items, } = useExpenseStore();
+  const { items } = useExpenseStore();
 
   const categories = Array.from(new Set(items.map(item => item.category)))
   .map((cat) => ({ value: cat ,label: cat}));
