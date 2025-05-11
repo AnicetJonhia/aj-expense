@@ -1,24 +1,17 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Pressable,
-  Modal,
-  FlatList,
-
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,TouchableOpacity 
-} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Pressable, FlatList, Keyboard } from 'react-native';
 import { cn } from '@/lib/utils';
 import { Text } from '@/components/ui/text';
-import { Check } from "@/lib/icons/Check"; 
-import {Input} from "@/components/ui/input";
+import { Check } from '@/lib/icons/Check';
+import { Input } from '@/components/ui/input';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+} from '@/components/ui/dialog';
 
-
-
-interface ComboboxOption {
+export interface ComboboxOption {
   label: string;
   value: string;
 }
@@ -38,111 +31,117 @@ export function Combobox({
   onSelectedItemChange,
   disabled = false,
 }: ComboboxProps) {
-  const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef<any>(null);
 
-  const filteredItems = items.filter((item) =>
-    item.label.toLowerCase().includes(search.toLowerCase())
+  const filtered = items.filter(i =>
+    i.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  return (
-    <View className="w-full">
-      <Pressable
-        className={cn(
-            'border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-xl bg-white dark:bg-[#1E1E1E] flex-row justify-between items-center'
-        )}
-        onPress={() => {
-          if (!disabled) setVisible(true);
-        }}
-        disabled={disabled}
-        >
-        <Text className="text-base text-gray-700 dark:text-white">
-          {selectedItem?.label || placeholder || 'Select...'}
-        </Text>
-        {selectedItem?.label && <Check />}
-      </Pressable>
+  const handleSelect = (item: ComboboxOption) => {
+    inputRef.current?.blur();
+    onSelectedItemChange(item);
+    setOpen(false);
+    setSearch('');
+  };
 
-      <Modal visible={visible} transparent animationType="fade">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={{ flex: 1 }}
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Pressable
+          className={cn(
+            'border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-xl bg-white dark:bg-[#1E1E1E] flex-row justify-between items-center',
+            disabled && 'opacity-50'
+          )}
+          onPress={() => !disabled && setOpen(true)}
+          disabled={disabled}
         >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View className="flex-1 justify-center items-center px-4">
-            <View className="w-full gap-2 flex max-w-md max-h-[80%] rounded-xl bg-white dark:bg-[#1E1E1E] p-4 space-y-3">
-              
-              <View className="relative ">
-                        <Input
-                          id="search"
-                          placeholder="Search..."
-                          className="pr-10"
-                          value={search}
-                          onChangeText={setSearch}
-                        />
-                        
-                  
-                        {search.length > 0 ? (
-                          <TouchableOpacity
-                            onPress={() => {
-                              setSearch('');
-                              Keyboard.dismiss();
-                            }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2"
-                          >
-                            <FontAwesome name="times-circle" size={20} color="gray" />
-                          </TouchableOpacity>
-                        ) : (
-                          <View className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <FontAwesome name="search-minus" size={20} color="gray" />
-                          </View>
-                        )}
-                      </View>
-              <FlatList
-                
-                data={filteredItems}
-                keyExtractor={(item) => item.value}
-                style={{ maxHeight: 300 }}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => {
-                  const isSelected = selectedItem?.value === item.value;
-                  return (
-                    <Pressable
-                      onPress={() => {
-                        Keyboard.dismiss();
-                      
-                          onSelectedItemChange(item);
-                          setVisible(false);
-                          setSearch('');
-                       
-                      }}
-                      className={cn(
-                        'px-3 py-3 rounded-md flex-row justify-between items-center',
-                        isSelected
-                          ? 'bg-gray-100 dark:bg-gray-700'
-                          : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                      )}
-                    >
-                      <Text
-                        className={cn(
-                          'text-sm',
-                          isSelected
-                            ? 'text-primary font-semibold'
-                            : 'text-gray-900 dark:text-white'
-                        )}
-                      >
-                        {item.label}
-                      </Text>
-                      {isSelected && <Check/>} 
-                    </Pressable>
-                  );
+          <Text className="text-base text-gray-700 dark:text-white">
+            {selectedItem?.label || placeholder || 'Select...'}
+          </Text>
+          {selectedItem && <Check />}
+        </Pressable>
+      </DialogTrigger>
+
+      <DialogContent className="w-screen gap-2 max-w-screen-md sm:max-w-screen-sm p-4">
+        <View className="space-y-3 pt-10">
+          <View className="relative">
+            <Input
+              ref={inputRef}
+              placeholder="Search..."
+              className="pr-10"
+              value={search}
+              onChangeText={setSearch}
+            />
+            {search.length > 0 ? (
+              <Pressable
+                onPress={() => {
+                  setSearch('');
+                  inputRef.current?.blur();
                 }}
-              />
-            </View>
-                 </View>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </Modal>
-    </View>
+                style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: [{ translateY: -10 }],
+                  zIndex: 10,
+                  padding: 4,
+                }}
+              >
+                <FontAwesome name="times-circle" size={20} color="gray" />
+              </Pressable>
+            ) : (
+              <View
+                style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: [{ translateY: -10 }],
+                  zIndex: 1,
+                  padding: 4,
+                }}
+              >
+                <FontAwesome name="search-minus" size={20} color="gray" />
+              </View>
+            )}
+          </View>
+        </View>
+
+        <FlatList
+          data={filtered}
+          keyExtractor={i => i.value}
+          style={{ flexGrow: 0, maxHeight: 300 }}
+          keyboardShouldPersistTaps="always"
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => {
+            const isSel = selectedItem?.value === item.value;
+            return (
+              <Pressable
+                onPress={() => handleSelect(item)}
+                className={cn(
+                  'px-3 py-3 rounded-md flex-row justify-between items-center',
+                  isSel
+                    ? 'bg-gray-100 dark:bg-gray-700'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                )}
+              >
+                <Text
+                  className={cn(
+                    'text-sm',
+                    isSel
+                      ? 'text-primary font-semibold'
+                      : 'text-gray-900 dark:text-white'
+                  )}
+                >
+                  {item.label}
+                </Text>
+                {isSel && <Check />}
+              </Pressable>
+            );
+          }}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

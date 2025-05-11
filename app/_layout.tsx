@@ -15,7 +15,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <StatusBar />
+      <StatusBar translucent style="auto" />
       <Stack>
       <Stack.Screen
       name="(tabs)"
