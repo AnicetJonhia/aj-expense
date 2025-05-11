@@ -57,11 +57,12 @@ export default function GlobalDashboard() {
 
         <Card className="flex-1 bg-gray-100 dark:bg-gray-900">
           <CardContent className="p-4">
-            <View className="flex-row justify-between items-center">
+            <View className="flex-row gap-2 items-center">
+            <Text><FontAwesome name="calendar" size={18}  /></Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">
                 {format(now, 'yyyy')}
               </Text>
-              <Text><FontAwesome name="calendar" size={18}  /></Text>
+              
             </View>
             <Text className="text-xl font-bold text-primary">
               {totals.year} Ar
@@ -72,11 +73,12 @@ export default function GlobalDashboard() {
       
         <Card className="flex-1 bg-gray-100 dark:bg-gray-900">
           <CardContent className="p-4">
-            <View className="flex-row justify-between items-center">
+            <View className="flex-row gap-2 items-center">
+            <Text><FontAwesome name="calendar-o" size={18}  /></Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">
                 {format(now, 'MMMM, yyyy')}
               </Text>
-              <Text><FontAwesome name="calendar-o" size={18}  /></Text>
+              
             </View>
             <Text className="text-xl font-bold text-primary">
               {totals.month} Ar
@@ -89,11 +91,12 @@ export default function GlobalDashboard() {
 
         <Card className="bg-gray-100 dark:bg-gray-900">
           <CardContent className="p-4">
-            <View className="flex-row justify-between items-center">
+            <View className="flex-row gap-2 items-center">
+            <Text><FontAwesome name="calendar-check-o" size={18} /></Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">
                 {format(now, 'MMMM do, yyyy')}
               </Text>
-              <Text><FontAwesome name="calendar-check-o" size={18} /></Text>
+              
             </View>
             <Text className="text-xl font-bold text-primary">
               {totals.day} Ar

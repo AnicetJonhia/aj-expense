@@ -138,14 +138,19 @@ export default function DashboardDateFilter({ onChange }: DashboardDateFilterPro
         <Card className="mt-2 bg-gray-100 dark:bg-gray-900">
           <CardContent className="p-4 flex-row justify-between items-center">
             <View>
+            <View className="flex-row gap-2 items-center">
+              <Text><FontAwesome name="calendar" size={18} /></Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">
                 {year === 'all' ? 'All Years' : year}
               </Text>
+
+              </View>
               <Text className="text-xl font-bold text-primary">
                 {totalYear} Ar
               </Text>
-            </View>
-            <Text><FontAwesome name="calendar" size={18} /></Text>
+              </View>
+           
+           
           </CardContent>
         </Card>
       </View>
@@ -169,7 +174,9 @@ export default function DashboardDateFilter({ onChange }: DashboardDateFilterPro
             />
             <Card className="mt-2 bg-gray-100 dark:bg-gray-900">
               <CardContent className="p-4 flex-row justify-between items-center">
-                <View>
+               <View>
+                <View className="flex-row gap-2 items-center">
+                  <Text><FontAwesome name="calendar-o" size={18} /></Text>
                   <Text className="text-sm text-gray-500 dark:text-gray-400">
                     {month == null
                       ? '—'
@@ -182,11 +189,12 @@ export default function DashboardDateFilter({ onChange }: DashboardDateFilterPro
                           'MMMM, yyyy'
                         )}
                   </Text>
+                  </View>
                   <Text className="text-xl font-bold text-primary">
                     {totalMonth} Ar
                   </Text>
-                </View>
-                <Text><FontAwesome name="calendar-o" size={18} /></Text>
+                
+                  </View>
               </CardContent>
             </Card>
           </View>
@@ -206,6 +214,8 @@ export default function DashboardDateFilter({ onChange }: DashboardDateFilterPro
             <Card className="mt-2 bg-gray-100 dark:bg-gray-900">
               <CardContent className="p-4 flex-row justify-between items-center">
                 <View>
+                <View className="flex-row gap-2 items-center">
+                 <Text><FontAwesome name="calendar-check-o" size={18} /></Text>
                   <Text className="text-sm text-gray-500 dark:text-gray-400">
                     {day == null
                       ? '—'
@@ -218,11 +228,12 @@ export default function DashboardDateFilter({ onChange }: DashboardDateFilterPro
                           'MMMM do, yyyy'
                         )}
                   </Text>
+                  </View>
                   <Text className="text-xl font-bold text-primary">
                     {totalDay} Ar
                   </Text>
                 </View>
-                <Text><FontAwesome name="calendar-check-o" size={18} /></Text>
+               
               </CardContent>
             </Card>
           </View>

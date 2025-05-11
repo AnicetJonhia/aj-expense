@@ -95,14 +95,17 @@ export default function DashboardCategoryFilter({ dateString }: DashboardCategor
         <Card className="mt-2 bg-gray-100 dark:bg-gray-900">
             <CardContent className="p-4 flex-row justify-between items-center">
             <View>
+            <View className="flex-row gap-2 items-center">
+            <Text> <FontAwesome name="calendar" size={20} /></Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">
-                {year} / {selectedCategory}
+                {year} 
               </Text>
+              </View>
               <Text className="text-xl font-bold text-primary">
                 {totalByYear} Ar
               </Text>
             </View>
-           <Text> <FontAwesome name="calendar" size={20} /></Text>
+           <Text> {selectedCategory}</Text>
           </CardContent>
         </Card>
       )}
@@ -112,14 +115,17 @@ export default function DashboardCategoryFilter({ dateString }: DashboardCategor
         <Card className="mt-2 bg-gray-100 dark:bg-gray-900">
             <CardContent className="p-4 flex-row justify-between items-center">
             <View>
-              <Text className="text-sm text-gray-500 dark:text-gray-400">
-                {format(new Date(Number(year), Number(month) - 1, 1), 'MMMM yyyy')} / {selectedCategory}
-              </Text>
+                  <View className="flex-row gap-2 items-center">
+                  <Text><FontAwesome name="calendar-o" size={20} /></Text>
+                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                        {format(new Date(Number(year), Number(month) - 1, 1), 'MMMM yyyy')} 
+                    </Text>
+                </View>
               <Text className="text-xl font-bold text-primary">
                 {totalByMonth} Ar
               </Text>
             </View>
-            <Text><FontAwesome name="calendar-o" size={20} /></Text>
+            <Text >{selectedCategory}</Text>
           </CardContent>
         </Card>
       )}
@@ -129,18 +135,21 @@ export default function DashboardCategoryFilter({ dateString }: DashboardCategor
         <Card className="mt-2 bg-gray-100 dark:bg-gray-900">
             <CardContent className="p-4 flex-row justify-between items-center">
             <View>
+            <View className="flex-row gap-2 items-center">
+            <Text><FontAwesome name="calendar-check-o" size={20} /></Text>
               <Text className="text-sm text-gray-500 dark:text-gray-400">
                 {format(
                   new Date(Number(year), Number(month) - 1, Number(day)),
                   'MMMM do, yyyy'
                 )}{' '}
-                / {selectedCategory}
+                
               </Text>
+              </View>
               <Text className="text-xl font-bold text-primary">
                 {totalByDay} Ar
               </Text>
             </View>
-            <Text><FontAwesome name="calendar-check-o" size={20} /></Text>
+            <Text>{selectedCategory}</Text>
           </CardContent>
         </Card>
       )}

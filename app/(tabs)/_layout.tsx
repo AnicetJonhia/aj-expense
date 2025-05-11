@@ -24,10 +24,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="add"
+        name="analytics"
         options={{
-          title: 'Add',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="plus-circle" color={color} />,
+          title: 'Analytics',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="line-chart" color={color} />,
         }}
       />
       <Tabs.Screen
