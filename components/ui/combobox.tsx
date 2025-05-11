@@ -20,6 +20,7 @@ interface ComboboxProps {
   placeholder?: string;
   selectedItem: ComboboxOption | null;
   onSelectedItemChange: (item: ComboboxOption) => void;
+  disabled?: boolean;
 }
 
 export function Combobox({
@@ -27,6 +28,7 @@ export function Combobox({
   placeholder,
   selectedItem,
   onSelectedItemChange,
+  disabled = false,
 }: ComboboxProps) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
@@ -41,7 +43,10 @@ export function Combobox({
         className={cn(
             'border border-gray-300 dark:border-gray-600 px-4 py-3 rounded-xl bg-white dark:bg-[#1E1E1E] flex-row justify-between items-center'
         )}
-        onPress={() => setVisible(true)}
+        onPress={() => {
+          if (!disabled) setVisible(true);
+        }}
+        disabled={disabled}
         >
         <Text className="text-base text-gray-700 dark:text-white">
           {selectedItem?.label || placeholder || 'Select...'}
