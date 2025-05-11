@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { useEffect , useState, useMemo} from 'react';
 import { FlatList, View ,TouchableOpacity ,Keyboard } from 'react-native';
 
-import ExpenseListHeader from "@/components/ExpenseListHeader";
+import TabHeader from "@/components/TabHeader";
 import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
 import Toast from 'react-native-toast-message';
 import ExpenseEditDialog from "@/components/ExpenseEditDialog";
@@ -32,6 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { AddExpenseDialog } from "@/components/AddExpenseDialog";
 
 type Expense = {
   id: number;
@@ -52,6 +53,9 @@ export default function ExpenseScreen() {
 const [selectedDate, setSelectedDate] = useState<string>('');
 const [isOpen, setIsOpen] = useState<boolean>(false);
 const [selectedCategory, setSelectedCategory] = useState<string>('');
+const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
+
+
 
 
   
@@ -110,7 +114,8 @@ const [selectedCategory, setSelectedCategory] = useState<string>('');
    
       <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
         
-        <ExpenseListHeader/>
+        <TabHeader title={"My Expenses"} onAddPress={() => setIsAddOpen(true)} />
+
         <View className="flex flex-row  gap-2">
             
         <View className="relative flex-1">
@@ -174,7 +179,7 @@ const [selectedCategory, setSelectedCategory] = useState<string>('');
           </View>
 
         {dateFilteredItems.length === 0 ? (
-          <MissingExpense />
+          <MissingExpense onAddPress={() => setIsAddOpen(true)}/>
         ) : (
           <>
             <FlatList
@@ -307,6 +312,9 @@ const [selectedCategory, setSelectedCategory] = useState<string>('');
             setIsOpen={setIsOpen}
             handleDateChange={handleDateChange}
           />
+
+      <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />
+
       </View>
  
   );

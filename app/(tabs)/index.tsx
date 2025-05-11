@@ -1,23 +1,26 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Text } from '@/components/ui/text';
-import { Card, CardContent } from '@/components/ui/card';
-import { useExpenseStore } from '@/store/useExpenseStore';
-import { format } from 'date-fns';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import TabHeader from '@/components/TabHeader';
 import GlobalDashboard from '@/components/GlobalDashboard';
 import DashboardFiltration from '@/components/DashboardFiltration';
+import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 
 
 export default function DashboardScreen() {
-  
+  const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
 
   return (
-    <ScrollView className="flex-1 px-4 py-6 ">
+    <>
+    <View className="flex-1 p-4 gap-2 bg-white dark:bg-black">
+    <TabHeader title={"Dashboard"} onAddPress={() => setIsAddOpen(true)} />
+    <ScrollView showsVerticalScrollIndicator={false} className="flex-1 py-2 ">
       <GlobalDashboard/>
       <DashboardFiltration/>
     </ScrollView>
+    </View>
+     <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />
+    </>
 
   );
 }
