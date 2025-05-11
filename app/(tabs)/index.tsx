@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import TabHeader from '@/components/TabHeader';
 import GlobalDashboard from '@/components/GlobalDashboard';
-import DashboardFiltration from '@/components/DashboardFiltration';
+import DashboardDateFilter from '@/components/DashboardDateFilter';
 import { AddExpenseDialog } from '@/components/AddExpenseDialog';
-
+import DashboardCategoryFilter from '@/components/DashboardCategoryFilter';
+import {Separator} from "@/components/ui/separator"
 
 export default function DashboardScreen() {
   const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
+  const [dateString, setDateString] = useState<string>('')
 
   return (
     <>
@@ -16,7 +18,15 @@ export default function DashboardScreen() {
     <TabHeader title={"Dashboard"} onAddPress={() => setIsAddOpen(true)} />
     <ScrollView showsVerticalScrollIndicator={false} className="flex-1 py-2 ">
       <GlobalDashboard/>
-      <DashboardFiltration/>
+      <Separator className="mt-4"/>
+    
+      <DashboardDateFilter  onChange={(date: string) => {
+          
+          setDateString(date)
+        }}/>
+           <Separator/>
+        <DashboardCategoryFilter dateString={dateString} />
+        <Separator/>
     </ScrollView>
     </View>
      <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />

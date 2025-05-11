@@ -7,6 +7,7 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import { format } from 'date-fns';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+
 export default function GlobalDashboard() {
   const { items, fetchExpenses } = useExpenseStore();
   const [totals, setTotals] = useState({
@@ -85,7 +86,7 @@ export default function GlobalDashboard() {
       </View>
 
 
-      <View className="mb-6">
+
         <Card className="bg-gray-100 dark:bg-gray-900">
           <CardContent className="p-4">
             <View className="flex-row justify-between items-center">
@@ -99,7 +100,7 @@ export default function GlobalDashboard() {
             </Text>
           </CardContent>
         </Card>
-      </View>
+ 
       </>
 
   );
