@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View } from 'react-native';
 import { Combobox } from '@/components/ui/combobox';
-import { Label } from '@/components/ui/label';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useExpenseStore } from '@/store/useExpenseStore';
@@ -30,47 +30,59 @@ export default function DashboardCategoryFilter({ dateString }: DashboardCategor
     ];
   }, [dateString]);
 
-  // 1️⃣ Filtrer les dépenses selon dateString
-  const itemsByDate = useMemo(() => {
+  const itemsByYear = useMemo(() => {
     if (!year) return items;
     return items.filter(exp => {
       const d = new Date(exp.date);
-      if (String(d.getFullYear()) !== year) return false;
-      if (month && String(d.getMonth() + 1).padStart(2, '0') !== month) return false;
-      if (day && String(d.getDate()).padStart(2, '0') !== day) return false;
-      return true;
+      return String(d.getFullYear()) === year;
     });
-  }, [items, year, month, day]);
+  }, [items, year]);
 
-  // 2️⃣ Extraire les catégories uniques pour le Combobox
+  const itemsByMonth = useMemo(() => {
+    if (!year || !month) return itemsByYear;
+    return itemsByYear.filter(exp => {
+      const d = new Date(exp.date);
+      return String(d.getMonth() + 1).padStart(2, '0') === month;
+    });
+  }, [itemsByYear, year, month]);
+
+  const itemsByDay = useMemo(() => {
+    if (!year || !month || !day) return itemsByMonth;
+    return itemsByMonth.filter(exp => {
+      const d = new Date(exp.date);
+      return String(d.getDate()).padStart(2, '0') === day;
+    });
+  }, [itemsByMonth, year, month, day]);
+
+ 
+
   const categories = useMemo<ComboboxItem[]>(() => {
-    const setC = new Set(itemsByDate.map(exp => exp.category));
+    const setC = new Set(itemsByYear.map(exp => exp.category));
     return [...setC]
       .sort()
       .map(cat => ({ label: cat, value: cat }));
-  }, [itemsByDate]);
+  }, [itemsByYear]);
 
-  // 3️⃣ Totaux par niveau de granularité
   const totalByYear = useMemo(() => {
-    if (!year || !selectedCategory) return 0;
-    return itemsByDate
-      .filter(exp => exp.category === selectedCategory)
-      .reduce((sum, exp) => sum + exp.amount, 0);
-  }, [itemsByDate, year, selectedCategory]);
+    const list = selectedCategory
+      ? itemsByYear.filter(exp => exp.category === selectedCategory)
+      : itemsByYear;
+    return list.reduce((sum, exp) => sum + exp.amount, 0);
+  }, [itemsByYear, selectedCategory]);
 
   const totalByMonth = useMemo(() => {
-    if (!year || !month || !selectedCategory) return 0;
-    return itemsByDate
-      .filter(exp => exp.category === selectedCategory)
-      .reduce((sum, exp) => sum + exp.amount, 0);
-  }, [itemsByDate, month, selectedCategory]);
+    const list = selectedCategory
+      ? itemsByMonth.filter(exp => exp.category === selectedCategory)
+      : itemsByMonth;
+    return list.reduce((sum, exp) => sum + exp.amount, 0);
+  }, [itemsByMonth, selectedCategory]);
 
   const totalByDay = useMemo(() => {
-    if (!year || !month || !day || !selectedCategory) return 0;
-    return itemsByDate
-      .filter(exp => exp.category === selectedCategory)
-      .reduce((sum, exp) => sum + exp.amount, 0);
-  }, [itemsByDate, day, selectedCategory]);
+    const list = selectedCategory
+      ? itemsByDay.filter(exp => exp.category === selectedCategory)
+      : itemsByDay;
+    return list.reduce((sum, exp) => sum + exp.amount, 0);
+  }, [itemsByDay, selectedCategory]);
 
   return (
     <View className="gap-2 mt-6 mb-2">
