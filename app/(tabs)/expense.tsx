@@ -152,13 +152,18 @@ const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
                   
                 >
                   <Text className="text-sm">
-                {selectedDate && selectedCategory
-                  ? `${formatDate(selectedDate)} - ${selectedCategory}`
-                  : selectedDate
-                  ? formatDate(selectedDate)
-                  : selectedCategory
-                  ? selectedCategory
-                  : 'Filter'}
+                  {selectedDate && selectedCategory
+                    ? `${formatDate(selectedDate)} - ${selectedCategory}`
+                    : selectedDate
+                    ? formatDate(selectedDate)
+                    : selectedCategory
+                    ? selectedCategory
+                    : 
+                    <View className="flex-row items-center gap-2">
+                        <Text><FontAwesome name="filter" size={14} /></Text>
+                        <Text className="text-sm">Filters</Text>
+                      </View>
+                }
               </Text>
 
                 </Button>
