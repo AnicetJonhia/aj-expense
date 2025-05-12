@@ -17,7 +17,7 @@ export default function DateFilterDialog({
 }: DateFilterDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="w-screen max-w-screen-md sm:max-w-screen-sm p-4">
+      <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
         <DialogHeader>
           <DialogTitle>Expense Filtration</DialogTitle>
         </DialogHeader>

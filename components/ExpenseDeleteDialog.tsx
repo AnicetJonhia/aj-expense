@@ -23,7 +23,7 @@ export default function ExpenseDeleteDialog({
 }) {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
         <AlertDialogHeader>
           <AlertDialogTitle>
             Delete *{itemTitle}*?

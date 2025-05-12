@@ -63,7 +63,7 @@ export function AddExpenseDialog({ isOpen, setIsOpen }: AddExpenseDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="w-screen max-w-screen-md sm:max-w-screen-sm p-4">
+      <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
         <DialogHeader>
           <DialogTitle>Add Expense</DialogTitle>
         </DialogHeader>
@@ -119,7 +119,6 @@ export function AddExpenseDialog({ isOpen, setIsOpen }: AddExpenseDialogProps) {
               <Text>Add</Text>
             </View>
           </Button>
-          
         </DialogFooter>
       </DialogContent>
     </Dialog>
