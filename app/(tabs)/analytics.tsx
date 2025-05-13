@@ -5,6 +5,8 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import { LineChart, ProgressChart } from 'react-native-chart-kit';
 import { format } from 'date-fns';
 import { useColorScheme } from 'nativewind';
+import { FontAwesome } from '@expo/vector-icons';
+import { Separator } from '@/components/ui/separator';
 
 type CategoryTotals = Record<string, number>;
 
@@ -94,23 +96,24 @@ export default function AnalyticsScreen() {
       </View>
       <ScrollView showsVerticalScrollIndicator={false} className="gap-4">
         {/* Top Category Rings */}
-        <Text className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">🏆 Top Categories</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
+        
+        <Text className="text-2xl font-bold mt-4">🏆 Top Categories</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} >
           {topBlocks.map(({ period, category, data }, idx) => {
             const percent = data[0] > 0 ? (data[0] * 100).toFixed(1) : '0';
-            const cardWidth = screenWidth * 0.7;
+            const cardWidth = screenWidth * 0.52;
             return (
               <View
                 key={idx}
-                className="m-4 rounded-2xl p-4 shadow-md"
+                className="m-4 flex-1 rounded-2xl p-4 shadow-md"
                 style={{ width: cardWidth, backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
               >
                 <Text
-                  className="text-base text-center font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                  className=" text-center  font-medium text-zinc-700 dark:text-zinc-300 mb-2"
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
-                  {period}
+                  <FontAwesome name="calendar-check-o"/>  {period}
                 </Text>
                 <View className="items-center">
                   <ProgressChart
@@ -124,7 +127,7 @@ export default function AnalyticsScreen() {
                     style={{ backgroundColor: 'transparent' }}
                   />
                 </View>
-                <Text className="mt-2 text-center text-zinc-800 dark:text-zinc-200">
+                <Text className="mt-2 text-xl font-bold text-center text-zinc-800 dark:text-zinc-200">
                   {percent}% {category}
                 </Text>
               </View>
@@ -132,11 +135,12 @@ export default function AnalyticsScreen() {
           })}
         </ScrollView>
 
+        <Separator/>
         {/* Monthly Trend LineChart */}
-        <View>
-          <Text className="text-lg font-semibold mb-3 text-zinc-800 dark:text-zinc-100">
-            📊 Monthly Trend ({format(now, 'yyyy')})
-          </Text>
+        <View className='mt-4 gap-4 flex'>
+
+
+          <Text className="text-2xl font-bold "> 📊 Monthly Trend ({format(now, 'yyyy')})</Text>
           <View
             className="rounded-2xl mb-4 pr-2 overflow-hidden shadow-md"
             style={{ backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
