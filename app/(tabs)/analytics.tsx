@@ -81,12 +81,12 @@ export default function AnalyticsScreen() {
   ];
 
   return (
-    <View className="flex-1 bg-white dark:bg-black">
+    <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
       {/* Header */}
       <View className="flex-row items-center border-b border-gray-300 dark:border-gray-600 p-4">
         <Text className="text-2xl font-bold text-gray-800 dark:text-white">📈 Analytics</Text>
       </View>
-      <ScrollView className="gap-2">
+      <ScrollView showsVerticalScrollIndicator={false} className="gap-4">
         {/* Top Category Rings */}
         <Text className="text-lg font-semibold text-gray-800 dark:text-white mb-4">🏆 Top Categories</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
@@ -96,12 +96,13 @@ export default function AnalyticsScreen() {
             return (
               <View
                 key={idx}
-                className="mr-4 rounded-2xl p-4 shadow-md"
+                className="m-4 rounded-2xl p-4 shadow-md"
                 style={{ width: cardWidth, backgroundColor: isDark ? '#1F2937' : '#ffffff' }}
               >
-                <Text className="text-base font-medium text-gray-700 dark:text-gray-300 mb-2" numberOfLines={1} ellipsizeMode="tail">
-                  {label}
+                <Text className="text-base text-center font-medium text-gray-700 dark:text-gray-300 mb-2" numberOfLines={1} ellipsizeMode="tail">
+                  {label} 
                 </Text>
+                <View className='items-center'>
                 <ProgressChart
                   data={{ data }}
                   width={cardWidth * 0.5}
@@ -112,6 +113,7 @@ export default function AnalyticsScreen() {
                   hideLegend
                   style={{ backgroundColor: 'transparent' }}
                 />
+                </View>
                 <Text className="mt-2 text-center text-gray-800 dark:text-gray-200">
                   {percent}% of spend
                 </Text>
@@ -121,10 +123,11 @@ export default function AnalyticsScreen() {
         </ScrollView>
 
         {/* Monthly Trend LineChart */}
+        <View >
         <Text className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
           📊 Monthly Trend ({format(now, 'yyyy')})
         </Text>
-        <View className="rounded-2xl overflow-hidden shadow-md"
+        <View className="rounded-2xl  mb-4 pr-2 overflow-hidden shadow-md"
               style={{ backgroundColor: isDark ? '#1F2937' : '#ffffff' }}>
           <LineChart
             data={{
@@ -133,11 +136,12 @@ export default function AnalyticsScreen() {
             }}
             width={screenWidth - 32}
             height={220}
-            yAxisLabel="$ "
+            yAxisLabel="Ar "
             chartConfig={chartConfig}
             bezier
             style={{ backgroundColor: 'transparent' }}
           />
+        </View>
         </View>
       </ScrollView>
     </View>
