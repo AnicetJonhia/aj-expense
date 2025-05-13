@@ -9,22 +9,35 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Separator } from '@/components/ui/separator';
 import TabHeader from '@/components/TabHeader';
 import { AddExpenseDialog } from '@/components/AddExpenseDialog';
+import { Combobox, ComboboxOption } from '@/components/ui/combobox';
 
 type CategoryTotals = Record<string, number>;
 
 export default function AnalyticsScreen() {
-    const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
+  const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
   const { items, fetchExpenses } = useExpenseStore();
-  const [now] = useState(new Date());
+  const [now] = useState(() => new Date());
   const { width: screenWidth } = useWindowDimensions();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  // --- fetch on mount ---
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  // Totals per category for year/month/day
+  // --- dynamic list of years from your data ---
+  const years = useMemo<ComboboxOption[]>(() => {
+    const setY = new Set(items.map(i => new Date(i.date).getFullYear()));
+    return [...setY]
+      .sort((a, b) => b - a)
+      .map(y => ({ label: String(y), value: String(y) }));
+  }, [items]);
+
+  // --- which year is selected (defaults to current) ---
+  const [selectedYear, setSelectedYear] = useState<string>(String(now.getFullYear()));
+
+  // --- per-category totals for top-category rings (always based on current date) ---
   const totals = useMemo(() => {
     const catYear: CategoryTotals = {};
     const catMonth: CategoryTotals = {};
@@ -44,7 +57,6 @@ export default function AnalyticsScreen() {
     return { year: catYear, month: catMonth, day: catDay };
   }, [items, now]);
 
-  // Extract single top category and its share
   const extractTop = (catTotals: CategoryTotals) => {
     const entries = Object.entries(catTotals);
     const total = entries.reduce((sum, [, v]) => sum + v, 0);
@@ -53,73 +65,62 @@ export default function AnalyticsScreen() {
     return { category: topCat, data: [topVal / total] };
   };
 
-  const yearTop = extractTop(totals.year);
+  const yearTop  = extractTop(totals.year);
   const monthTop = extractTop(totals.month);
-  const dayTop = extractTop(totals.day);
+  const dayTop   = extractTop(totals.day);
 
-  // Monthly series for the LineChart
+  // --- monthly series FOR the selectedYear combobox ---
   const monthlySeries = useMemo(() => {
+    const yearNum = Number(selectedYear);
     const arr = Array(12).fill(0);
     items.forEach(({ amount, date }) => {
       const d = new Date(date);
-      if (d.getFullYear() === now.getFullYear()) {
+      if (d.getFullYear() === yearNum) {
         arr[d.getMonth()] += amount;
       }
     });
     return arr;
-  }, [items, now]);
+  }, [items, selectedYear]);
 
   const chartConfig = {
     backgroundColor: 'transparent',
-    backgroundGradientFrom: isDark ? '#27272A' : '#F4F4F5', // zinc-800 / zinc-100
-    backgroundGradientTo: isDark ? '#27272A' : '#F4F4F5',
+    backgroundGradientFrom: isDark ? '#27272A' : '#F4F4F5', // zinc‐800 / zinc‐100
+    backgroundGradientTo:   isDark ? '#27272A' : '#F4F4F5',
     decimalPlaces: 1,
-    color: (opacity: number = 1) =>
-      isDark
-        ? `rgba(107,114,128,${opacity})` // zinc-500
-        : `rgba(59,130,246,${opacity})`,  // blue-500
-    labelColor: (opacity: number = 1) =>
-      isDark
-        ? `rgba(107,114,128,${opacity})`
-        : `rgba(59,130,246,${opacity})`,
+    color:       (op = 1) => isDark ? `rgba(107,114,128,${op})` : `rgba(59,130,246,${op})`,
+    labelColor:  (op = 1) => isDark ? `rgba(107,114,128,${op})` : `rgba(59,130,246,${op})`,
   };
 
-  // Top category blocks
   const topBlocks = [
-    { period: 'This Year', ...yearTop },
+    { period: 'This Year',  ...yearTop  },
     { period: 'This Month', ...monthTop },
-    { period: 'Today', ...dayTop },
+    { period: 'Today',      ...dayTop   },
   ];
 
   return (
-     <View className="flex-1 p-4 gap-2 bg-white dark:bg-black">
-      {/* Header */}
-      <TabHeader title={"Analytics"} onAddPress={() => setIsAddOpen(true)} />
-      <ScrollView showsVerticalScrollIndicator={false} className="gap-4">
-        {/* Top Category Rings */}
-        
-        <Text className="text-2xl font-bold mt-4">🏆 Top Categories</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+    <View className="flex-1 p-4 gap-2 bg-white dark:bg-black">
+      <TabHeader title="Analytics" onAddPress={() => setIsAddOpen(true)} />
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Top-Categories */}
+        <Text className="text-2xl font-bold mt-4 text-gray-800 dark:text-white">🏆 Top Categories</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {topBlocks.map(({ period, category, data }, idx) => {
-            const percent = data[0] > 0 ? (data[0] * 100).toFixed(1) : '0';
-            const cardWidth = screenWidth * 0.52;
+            const pct = (data[0] * 100).toFixed(1);
+            const cardW = screenWidth * 0.6;
             return (
               <View
                 key={idx}
-                className="m-4 flex-1 rounded-2xl p-4 shadow-md"
-                style={{ width: cardWidth, backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
+                className="m-2 p-4 rounded-2xl p-4 shadow-md"
+                style={{ width: cardW, backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
               >
-                <Text
-                  className=" text-center  font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  <FontAwesome name="calendar-check-o"/>  {period}
+                <Text className="text-center font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  <FontAwesome name="calendar-check-o" size={16} /> {period}
                 </Text>
                 <View className="items-center">
                   <ProgressChart
                     data={{ data }}
-                    width={cardWidth * 0.5}
+                    width={cardW * 0.5}
                     height={120}
                     strokeWidth={12}
                     radius={40}
@@ -128,43 +129,53 @@ export default function AnalyticsScreen() {
                     style={{ backgroundColor: 'transparent' }}
                   />
                 </View>
-                <Text className="mt-2 text-xl font-bold text-center text-zinc-800 dark:text-zinc-200">
-                  {percent}% {category}
+                <Text className="mt-2 text-center font-bold text-gray-800 dark:text-gray-200">
+                  {pct}% of spend in {category}
                 </Text>
               </View>
             );
           })}
         </ScrollView>
 
-        <Separator/>
-        {/* Monthly Trend LineChart */}
-        <View className='mt-4 gap-4 flex'>
+        <Separator />
 
-
-          <Text className="text-2xl font-bold "> 📊 Monthly Trend ({format(now, 'yyyy')})</Text>
-          <View
-            className="rounded-2xl mb-4 pr-2 overflow-hidden shadow-md"
-            style={{ backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
-          >
-            <LineChart
-              data={{
-                labels: Array.from({ length: 12 }, (_, i) =>
-                  format(new Date(now.getFullYear(), i, 1), 'MMM'),
-                ),
-                datasets: [{ data: monthlySeries }],
-              }}
-              width={screenWidth - 32}
-              height={220}
-              yAxisLabel="Ar "
-              chartConfig={chartConfig}
-              bezier
-              style={{ backgroundColor: 'transparent' }}
-            />
-          </View>
+        {/* Monthly Trend + Year selector */}
+        <Text className="text-2xl font-bold mt-4 mb-2 text-gray-800 dark:text-white">
+          📊 Monthly Trend
+        </Text>
+        <View className="mb-4 flex-row items-center gap-2">
+        <Text className=" text-gray-600 dark:text-gray-400">
+            Year : 
+          </Text>
+          <View className="flex-1">
+            <Combobox
+            items={years}
+            selectedItem={years.find(y => y.value === selectedYear) || null}
+            onSelectedItemChange={opt => setSelectedYear(opt.value)}
+            placeholder="Select Year"
+          /></View>
+          
+        </View>
+        <View
+          className="rounded-2xl overflow-hidden shadow-md mb-8"
+          style={{ backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
+        >
+          <LineChart
+            data={{
+              labels: Array.from({ length: 12 }, (_, i) => format(new Date(Number(selectedYear), i, 1), 'MMM')),
+              datasets: [{ data: monthlySeries }],
+            }}
+            width={screenWidth - 32}
+            height={220}
+            yAxisLabel="Ar "
+            chartConfig={chartConfig}
+            bezier
+            style={{ backgroundColor: 'transparent' }}
+          />
         </View>
       </ScrollView>
 
-        <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />
+      <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />
     </View>
   );
 }
