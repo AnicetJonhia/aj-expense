@@ -85,7 +85,7 @@ export default function DashboardCategoryFilter({ dateString }: DashboardCategor
   }, [itemsByDay, selectedCategory]);
 
   return (
-    <View className="gap-2 mt-6 mb-2">
+    <View className="gap-2 mt-6 ">
       {/* Choix de la catégorie */}
       <Text className='text-2xl font-bold '>Filter by category</Text>
       <Combobox

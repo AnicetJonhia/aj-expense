@@ -117,8 +117,8 @@ export default function DashboardDateFilter({ onChange }: DashboardDateFilterPro
   }, [dateString, onChange])
 
   return (
-    <View className='mt-6'>
-      <Text className="text-2xl font-bold mb-2">Filter by Date</Text>
+    <View className='mt-6 mb-4'>
+      <Text className="text-2xl font-bold mb-2">Filter by date</Text>
 
       {/* Year */}
       <View className="mb-4">
