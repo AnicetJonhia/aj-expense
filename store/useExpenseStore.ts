@@ -16,6 +16,7 @@ type ExpenseStore = {
     fetchExpenses: () => Promise<void>;
     addExpense: (data: Omit<Expense, 'id'>) => Promise<void>;
     deleteExpense: (id: number) => Promise<void>;
+    deleteAllExpenses: () => Promise<void>;
     updateExpense: (id: number, data: Partial<Omit<Expense, 'id'>>) => Promise<void>;
   };
   
@@ -38,6 +39,11 @@ export const useExpenseStore = create<ExpenseStore>((set) => ({
     await db.delete(expenses).where(eq(expenses.id, id)).run();
     const updated = await db.select().from(expenses).all();
     set({ items: updated });
+  },
+
+  deleteAllExpenses: async () => {
+    await db.delete(expenses).run();
+    set({ items: [] });
   },
   updateExpense: async (id, updatedData) => {
   

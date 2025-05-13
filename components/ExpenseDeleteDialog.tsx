@@ -29,7 +29,7 @@ export default function ExpenseDeleteDialog({
             Delete *{itemTitle}*?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete the expense titled *{itemTitle}*? This action cannot be undone.
+            Are you sure you want to delete  *{itemTitle}*? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

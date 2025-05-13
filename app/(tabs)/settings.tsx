@@ -3,20 +3,25 @@ import { View, ScrollView } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label'; // Assure-toi d’avoir ce composant
+import { Label } from '@/components/ui/label'; 
 import { useColorScheme } from 'nativewind';
+import { useExpenseStore } from '@/store/useExpenseStore';
+import ExpenseDeleteDialog from '@/components/ExpenseDeleteDialog';
+import Toast from 'react-native-toast-message';
 
 export default function SettingsScreen() {
+   const { fetchExpenses, deleteAllExpenses } = useExpenseStore();
   const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const [checked, setChecked] = useState(isDark);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    // Optionnel : démarrer en mode dark
-    setColorScheme('dark');
-    setChecked(true);
-  }, []);
+      fetchExpenses();
+    }, []);
+
+
 
   const toggleColorScheme = () => {
     const newMode = isDark ? 'light' : 'dark';
@@ -59,7 +64,7 @@ export default function SettingsScreen() {
           <Button variant="outline">
             <Text>Export Data</Text>
           </Button>
-          <Button variant="destructive">
+          <Button variant="destructive" onPress={() =>setIsOpen(true)}>
             <Text>Reset All Data</Text>
           </Button>
         </View>
@@ -78,6 +83,26 @@ export default function SettingsScreen() {
           </Button>
         </View>
       </ScrollView>
+
+
+     
+              <ExpenseDeleteDialog
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                onConfirm={async () => {
+                  
+                    await deleteAllExpenses();
+                    
+                    Toast.show({
+                      type: 'success',
+                      text1: 'All data deleted',
+                      text2: 'Your expenses  were successfully removed.',
+                    });
+                  
+                }}
+                itemTitle={"all your data"}
+              />
+                       
     </View>
   );
 }
