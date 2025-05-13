@@ -43,9 +43,9 @@ export default function AnalyticsScreen() {
   const extractTop = (catTotals: CategoryTotals) => {
     const entries = Object.entries(catTotals);
     const total = entries.reduce((sum, [, v]) => sum + v, 0);
-    if (!entries.length || total === 0) return { label: '—', data: [0] };
+    if (!entries.length || total === 0) return { category: '—', data: [0] };
     const [topCat, topVal] = entries.sort((a, b) => b[1] - a[1])[0];
-    return { label: topCat, data: [topVal / total] };
+    return { category: topCat, data: [topVal / total] };
   };
 
   const yearTop = extractTop(totals.year);
@@ -66,56 +66,66 @@ export default function AnalyticsScreen() {
 
   const chartConfig = {
     backgroundColor: 'transparent',
-    backgroundGradientFrom: isDark ? '#1F2937' : '#ffffff',
-    backgroundGradientTo: isDark ? '#1F2937' : '#ffffff',
+    backgroundGradientFrom: isDark ? '#27272A' : '#F4F4F5', // zinc-800 / zinc-100
+    backgroundGradientTo: isDark ? '#27272A' : '#F4F4F5',
     decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(${isDark ? '107,114,128' : '59,130,246'}, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(${isDark ? '107,114,128' : '59,130,246'}, ${opacity})`,
+    color: (opacity: number = 1) =>
+      isDark
+        ? `rgba(107,114,128,${opacity})` // zinc-500
+        : `rgba(59,130,246,${opacity})`,  // blue-500
+    labelColor: (opacity: number = 1) =>
+      isDark
+        ? `rgba(107,114,128,${opacity})`
+        : `rgba(59,130,246,${opacity})`,
   };
 
   // Top category blocks
   const topBlocks = [
-    { label: 'This Year', ...yearTop },
-    { label: 'This Month', ...monthTop },
-    { label: 'Today', ...dayTop },
+    { period: 'This Year', ...yearTop },
+    { period: 'This Month', ...monthTop },
+    { period: 'Today', ...dayTop },
   ];
 
   return (
     <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
       {/* Header */}
-      <View className="flex-row items-center border-b border-gray-300 dark:border-gray-600 p-4">
-        <Text className="text-2xl font-bold text-gray-800 dark:text-white">📈 Analytics</Text>
+      <View className="flex-row items-center border-b border-zinc-400 dark:border-zinc-600 p-4">
+        <Text className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">📈 Analytics</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} className="gap-4">
         {/* Top Category Rings */}
-        <Text className="text-lg font-semibold text-gray-800 dark:text-white mb-4">🏆 Top Categories</Text>
+        <Text className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">🏆 Top Categories</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
-          {topBlocks.map(({ label, data }, idx) => {
+          {topBlocks.map(({ period, category, data }, idx) => {
             const percent = data[0] > 0 ? (data[0] * 100).toFixed(1) : '0';
             const cardWidth = screenWidth * 0.7;
             return (
               <View
                 key={idx}
                 className="m-4 rounded-2xl p-4 shadow-md"
-                style={{ width: cardWidth, backgroundColor: isDark ? '#1F2937' : '#ffffff' }}
+                style={{ width: cardWidth, backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
               >
-                <Text className="text-base text-center font-medium text-gray-700 dark:text-gray-300 mb-2" numberOfLines={1} ellipsizeMode="tail">
-                  {label} 
+                <Text
+                  className="text-base text-center font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {period}
                 </Text>
-                <View className='items-center'>
-                <ProgressChart
-                  data={{ data }}
-                  width={cardWidth * 0.5}
-                  height={120}
-                  strokeWidth={12}
-                  radius={40}
-                  chartConfig={chartConfig}
-                  hideLegend
-                  style={{ backgroundColor: 'transparent' }}
-                />
+                <View className="items-center">
+                  <ProgressChart
+                    data={{ data }}
+                    width={cardWidth * 0.5}
+                    height={120}
+                    strokeWidth={12}
+                    radius={40}
+                    chartConfig={chartConfig}
+                    hideLegend
+                    style={{ backgroundColor: 'transparent' }}
+                  />
                 </View>
-                <Text className="mt-2 text-center text-gray-800 dark:text-gray-200">
-                  {percent}% of spend
+                <Text className="mt-2 text-center text-zinc-800 dark:text-zinc-200">
+                  {percent}% {category}
                 </Text>
               </View>
             );
@@ -123,25 +133,29 @@ export default function AnalyticsScreen() {
         </ScrollView>
 
         {/* Monthly Trend LineChart */}
-        <View >
-        <Text className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
-          📊 Monthly Trend ({format(now, 'yyyy')})
-        </Text>
-        <View className="rounded-2xl  mb-4 pr-2 overflow-hidden shadow-md"
-              style={{ backgroundColor: isDark ? '#1F2937' : '#ffffff' }}>
-          <LineChart
-            data={{
-              labels: Array.from({ length: 12 }, (_, i) => format(new Date(now.getFullYear(), i, 1), 'MMM')),
-              datasets: [{ data: monthlySeries }],
-            }}
-            width={screenWidth - 32}
-            height={220}
-            yAxisLabel="Ar "
-            chartConfig={chartConfig}
-            bezier
-            style={{ backgroundColor: 'transparent' }}
-          />
-        </View>
+        <View>
+          <Text className="text-lg font-semibold mb-3 text-zinc-800 dark:text-zinc-100">
+            📊 Monthly Trend ({format(now, 'yyyy')})
+          </Text>
+          <View
+            className="rounded-2xl mb-4 pr-2 overflow-hidden shadow-md"
+            style={{ backgroundColor: isDark ? '#27272A' : '#F4F4F5' }}
+          >
+            <LineChart
+              data={{
+                labels: Array.from({ length: 12 }, (_, i) =>
+                  format(new Date(now.getFullYear(), i, 1), 'MMM'),
+                ),
+                datasets: [{ data: monthlySeries }],
+              }}
+              width={screenWidth - 32}
+              height={220}
+              yAxisLabel="Ar "
+              chartConfig={chartConfig}
+              bezier
+              style={{ backgroundColor: 'transparent' }}
+            />
+          </View>
         </View>
       </ScrollView>
     </View>
