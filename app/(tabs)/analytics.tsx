@@ -7,10 +7,13 @@ import { format } from 'date-fns';
 import { useColorScheme } from 'nativewind';
 import { FontAwesome } from '@expo/vector-icons';
 import { Separator } from '@/components/ui/separator';
+import TabHeader from '@/components/TabHeader';
+import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 
 type CategoryTotals = Record<string, number>;
 
 export default function AnalyticsScreen() {
+    const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
   const { items, fetchExpenses } = useExpenseStore();
   const [now] = useState(new Date());
   const { width: screenWidth } = useWindowDimensions();
@@ -89,11 +92,9 @@ export default function AnalyticsScreen() {
   ];
 
   return (
-    <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
+     <View className="flex-1 p-4 gap-2 bg-white dark:bg-black">
       {/* Header */}
-      <View className="flex-row items-center border-b border-zinc-400 dark:border-zinc-600 p-4">
-        <Text className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">📈 Analytics</Text>
-      </View>
+      <TabHeader title={"Analytics"} onAddPress={() => setIsAddOpen(true)} />
       <ScrollView showsVerticalScrollIndicator={false} className="gap-4">
         {/* Top Category Rings */}
         
@@ -162,6 +163,8 @@ export default function AnalyticsScreen() {
           </View>
         </View>
       </ScrollView>
+
+        <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />
     </View>
   );
 }
