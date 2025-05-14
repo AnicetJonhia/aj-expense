@@ -71,10 +71,17 @@ export default function ResetDataDialog({
       .map(dy => ({ label: String(dy), value: String(dy) }));
   }, [items, selectedYear, selectedMonth]);
 
-  const handleDelete = () => {
-    deleteFilteredExpenses(Number(selectedYear), Number(selectedMonth), Number(selectedDay));
-  };
-
+  function handleDelete() {
+    const yearParam =
+      selectedYear === 'all' ? undefined : Number(selectedYear)
+    const monthParam =
+      selectedMonth == null ? undefined : Number(selectedMonth)
+    const dayParam =
+      selectedDay == null ? undefined : Number(selectedDay)
+  
+    deleteFilteredExpenses(yearParam, monthParam, dayParam)
+  }
+  
   return (<>
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
