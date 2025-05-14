@@ -6,17 +6,16 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label'; 
 import { useColorScheme } from 'nativewind';
 import { useExpenseStore } from '@/store/useExpenseStore';
-import ExpenseDeleteDialog from '@/components/ExpenseDeleteDialog';
-import Toast from 'react-native-toast-message';
-import { ExportDialog } from '@/components/settings/ExportDialog';
+import  ExportDialog  from '@/components/settings/ExportDialog';
+import ResetDataDialog from '@/components/settings/ResetDataDialog';
 
 export default function SettingsScreen() {
-   const { fetchExpenses, deleteAllExpenses } = useExpenseStore();
+   const { fetchExpenses } = useExpenseStore();
   const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   const [checked, setChecked] = useState(isDark);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [resetOpen, setResetOpen] = useState<boolean>(false);
   const [exportOpen, setExportOpen] = useState<boolean>(false)
 
 
@@ -67,8 +66,8 @@ export default function SettingsScreen() {
           <Button variant="outline" onPress={() => setExportOpen(true)}>
             <Text>Export Data</Text>
           </Button>
-          <Button variant="destructive" onPress={() =>setIsOpen(true)}>
-            <Text>Reset All Data</Text>
+          <Button variant="destructive" onPress={() =>setResetOpen(true)}>
+            <Text>Reset Data</Text>
           </Button>
         </View>
 
@@ -89,22 +88,13 @@ export default function SettingsScreen() {
 
 
      
-              <ExpenseDeleteDialog
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                onConfirm={async () => {
-                  
-                    await deleteAllExpenses();
-                    
-                    Toast.show({
-                      type: 'success',
-                      text1: 'All data deleted',
-                      text2: 'Your expenses  were successfully removed.',
-                    });
-                  
-                }}
-                itemTitle={"all your data"}
-              />
+      <ResetDataDialog
+          isOpen={resetOpen}
+          setIsOpen={setResetOpen}
+      
+        />
+
+
 
         <ExportDialog
               isOpen={exportOpen}

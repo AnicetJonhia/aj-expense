@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Dialog,DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { Combobox } from '@/components/ui/combobox';
@@ -11,7 +11,7 @@ import * as Sharing from 'expo-sharing';
 
 type ComboboxItem = { label: string; value: string };
 
-export function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
+export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const { items, fetchExpenses } = useExpenseStore();
   const [year, setYear] = useState<string>('all');
   const [month, setMonth] = useState<string | null>(null);
