@@ -72,15 +72,21 @@ export function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline"><Text>Export PDF</Text></Button>
-      </DialogTrigger>
+      
       <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
         <DialogHeader><DialogTitle>Export Expenses</DialogTitle></DialogHeader>
         <View className="flex-row gap-2">
-          <Combobox items={yearOptions} selectedItem={yearOptions.find(y=>y.value===year)||null} onSelectedItemChange={opt=>{setYear(opt.value); setMonth(null); setDay(null);}} placeholder="Year" />
-          {year!=='all' && <Combobox items={monthOptions} selectedItem={monthOptions.find(m=>m.value===month)||null} onSelectedItemChange={opt=>{setMonth(opt.value); setDay(null);}} placeholder="Month" />}
-          {month && <Combobox items={dayOptions} selectedItem={dayOptions.find(d=>d.value===day)||null} onSelectedItemChange={opt=>setDay(opt.value)} placeholder="Day" />}
+          <View className='flex-1'>
+          <Combobox  items={yearOptions} selectedItem={yearOptions.find(y=>y.value===year)||null} onSelectedItemChange={opt=>{setYear(opt.value); setMonth(null); setDay(null);}} placeholder="Year" />
+          </View>
+          {year!=='all' && 
+          <View className='flex-1'>
+            <Combobox items={monthOptions} selectedItem={monthOptions.find(m=>m.value===month)||null} onSelectedItemChange={opt=>{setMonth(opt.value); setDay(null);}} placeholder="Month" />
+        </View>}
+          {month &&
+          <View className='flex-1'> <Combobox items={dayOptions} selectedItem={dayOptions.find(d=>d.value===day)||null} onSelectedItemChange={opt=>setDay(opt.value)} placeholder="Day" />
+          </View>
+          }
         </View>
         <DialogFooter>
           <View className='flex-row  gap-2'>
