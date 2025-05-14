@@ -8,6 +8,7 @@ import { useColorScheme } from 'nativewind';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import ExpenseDeleteDialog from '@/components/ExpenseDeleteDialog';
 import Toast from 'react-native-toast-message';
+import { ExportDialog } from '@/components/settings/ExportDialog';
 
 export default function SettingsScreen() {
    const { fetchExpenses, deleteAllExpenses } = useExpenseStore();
@@ -16,6 +17,8 @@ export default function SettingsScreen() {
 
   const [checked, setChecked] = useState(isDark);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [exportOpen, setExportOpen] = useState<boolean>(false)
+
 
   useEffect(() => {
       fetchExpenses();
@@ -61,7 +64,7 @@ export default function SettingsScreen() {
         {/* Data Section */}
         <Text className="text-lg font-semibold text-primary mt-6 mb-2">Data & Storage</Text>
         <View className="gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onPress={() => setExportOpen(true)}>
             <Text>Export Data</Text>
           </Button>
           <Button variant="destructive" onPress={() =>setIsOpen(true)}>
@@ -102,6 +105,11 @@ export default function SettingsScreen() {
                 }}
                 itemTitle={"all your data"}
               />
+
+        <ExportDialog
+              isOpen={exportOpen}
+              setIsOpen={setExportOpen}
+            />
                        
     </View>
   );

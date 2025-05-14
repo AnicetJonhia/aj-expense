@@ -9,6 +9,7 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import { Text } from '@/components/ui/text';
+import { View } from 'react-native';
 
 export default function ExpenseDeleteDialog({
   isOpen,
@@ -33,10 +34,11 @@ export default function ExpenseDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onPress={() => setIsOpen(false)}>
+          <View className='  flex-row  gap-2'>
+          <AlertDialogCancel className='flex-1' onPress={() => setIsOpen(false)}>
             <Text>Cancel</Text>
           </AlertDialogCancel>
-          <AlertDialogAction
+          <AlertDialogAction className='flex-1'
             onPress={() => {
               setIsOpen(false);
               onConfirm();
@@ -44,6 +46,7 @@ export default function ExpenseDeleteDialog({
           >
             <Text>Continue</Text>
           </AlertDialogAction>
+          </View>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
