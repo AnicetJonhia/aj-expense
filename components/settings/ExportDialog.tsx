@@ -70,7 +70,8 @@ const handleExport = async () => {
   const dateNow = format(new Date(), 'yyyy-MM-dd');
   const fileName = `AJExpenseExportData_${dateNow}.pdf`;
   const newPath = `${FileSystem.cacheDirectory}${fileName}`;
-  const message = `Data Export  to ${fileName}`;
+  const message = `Data Export to ${String(fileName || 'your file')}`;
+
 
   const html = `
     <h1>Expenses Report</h1>
