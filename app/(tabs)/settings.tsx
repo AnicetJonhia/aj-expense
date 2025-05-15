@@ -85,19 +85,19 @@ export default function SettingsScreen() {
         <View className=" gap-2">
           <View className="flex-row items-center  gap-2">
             
-            <Switch
+            <Switch   nativeID='daily-reminder'
               checked={dailyReminderEnabled}
               onCheckedChange={toggleDaily}
             />
-            <Label>Daily Reminder</Label>
+            <Label nativeID='daily-reminder'>Daily Reminder</Label>
         </View>
           <View className="flex-row items-center gap-2">
            
-            <Switch
+            <Switch nativeID='expense-alert'
               checked={expenseAlertEnabled}
               onCheckedChange={toggleExpenseAlert}
             />
-             <Label>Expense Alerts</Label>
+             <Label nativeID='expense-alert'>Expense Alerts</Label>
         </View>
         </View>
 
