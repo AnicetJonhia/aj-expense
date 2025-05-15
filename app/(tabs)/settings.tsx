@@ -43,10 +43,7 @@ export default function SettingsScreen() {
 
    const toggleDaily = async (on: boolean) => {
     setDailyReminderEnabled(on);
-    if (on) {
-     await scheduleDailyReminder();
-     setIsOpen(true);
-     }
+    if (on)  await scheduleDailyReminder();
     else await cancelDailyReminder();
   };
 
@@ -54,6 +51,7 @@ export default function SettingsScreen() {
     setExpenseAlertEnabled(on);
     if (on) {
       await scheduleExpenseAlert(alertThreshold);
+      setIsOpen(true)
     }
     // sinon tu pourrais annuler, mais ici on envoie à chaque dépassement immédiatement
   };
@@ -134,7 +132,7 @@ export default function SettingsScreen() {
          <Dialog open={isOpen} onOpenChange={setIsOpen}>
               
               <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
-                <DialogHeader><DialogTitle>Export Expenses</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>Expenses Alert</DialogTitle></DialogHeader>
           <View className="mb-4">
             <Label>Alert Threshold (Ar)</Label>
             <Input
