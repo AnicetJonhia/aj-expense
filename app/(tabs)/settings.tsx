@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, TextInput } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -9,6 +9,15 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import  ExportDialog  from '@/components/settings/ExportDialog';
 import ResetDataDialog from '@/components/settings/ResetDataDialog';
 
+import {
+  requestNotificationPermissions,
+  scheduleDailyReminder,
+  cancelDailyReminder,
+  scheduleExpenseAlert,
+} from '@/services/notifications';
+
+
+
 export default function SettingsScreen() {
    const { fetchExpenses } = useExpenseStore();
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -16,7 +25,12 @@ export default function SettingsScreen() {
 
   const [checked, setChecked] = useState(isDark);
   const [resetOpen, setResetOpen] = useState<boolean>(false);
-  const [exportOpen, setExportOpen] = useState<boolean>(false)
+  const [exportOpen, setExportOpen] = useState<boolean>(false);
+
+
+  const [dailyReminderEnabled, setDailyReminderEnabled] = useState<boolean>(false);
+  const [expenseAlertEnabled, setExpenseAlertEnabled] = useState<boolean>(false);
+  const [alertThreshold, setAlertThreshold] = useState<number>(1000);
 
 
   useEffect(() => {
@@ -24,6 +38,19 @@ export default function SettingsScreen() {
     }, []);
 
 
+   const toggleDaily = async (on: boolean) => {
+    setDailyReminderEnabled(on);
+    if (on) await scheduleDailyReminder();
+    else await cancelDailyReminder();
+  };
+
+  const toggleExpenseAlert = async (on: boolean) => {
+    setExpenseAlertEnabled(on);
+    if (on) {
+      await scheduleExpenseAlert(alertThreshold);
+    }
+    // sinon tu pourrais annuler, mais ici on envoie à chaque dépassement immédiatement
+  };
 
   const toggleColorScheme = () => {
     const newMode = isDark ? 'light' : 'dark';
@@ -52,12 +79,20 @@ export default function SettingsScreen() {
         {/* Notifications Section */}
         <Text className="text-lg font-semibold text-primary mt-6 mb-2">Notifications</Text>
         <View className=" gap-2">
-          <Button variant="outline">
-            <Text>Daily Reminder</Text>
-          </Button>
-          <Button variant="outline">
-            <Text>Expense Alerts</Text>
-          </Button>
+          <View className="flex-row items-center justify-between mb-4">
+            <Label>Daily Reminder</Label>
+            <Switch
+              checked={dailyReminderEnabled}
+              onCheckedChange={toggleDaily}
+            />
+        </View>
+          <View className="flex-row items-center justify-between mb-4">
+            <Label>Expense Alerts</Label>
+            <Switch
+              checked={expenseAlertEnabled}
+              onCheckedChange={toggleExpenseAlert}
+            />
+        </View>
         </View>
 
         {/* Data Section */}
@@ -85,6 +120,18 @@ export default function SettingsScreen() {
           </Button>
         </View>
       </ScrollView>
+
+      {expenseAlertEnabled && (
+          <View className="mb-4">
+            <Label>Alert Threshold (Ar)</Label>
+            <TextInput
+              keyboardType="numeric"
+              value={String(alertThreshold)}
+              onChangeText={txt => setAlertThreshold(Number(txt))}
+              className="border px-3 py-2 rounded"
+            />
+          </View>
+        )}
 
 
      
