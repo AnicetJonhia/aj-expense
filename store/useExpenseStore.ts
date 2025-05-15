@@ -51,50 +51,48 @@ export const useExpenseStore = create<ExpenseStore>((set) => ({
 
 
   deleteFilteredExpenses: async (year, month, day) => {
-    // Build date range
-    if (!year) {
-      // no year filter => delete all
+    // if year is _exactly_ undefined, delete everything
+    if (year === undefined) {
       await db.delete(expenses).run();
       set({ items: [] });
       return;
     }
-    let start = `${year.toString().padStart(4,'0')}-01-01T00:00:00.000Z`;
+
+    // build start/end ISO strings
+    let start = `${year.toString().padStart(4, '0')}-01-01T00:00:00.000Z`;
     let end: string;
-    if (year && month == null) {
-      // delete full year
-      end = `${(year + 1).toString().padStart(4,'0')}-01-01T00:00:00.000Z`;
-    } else if (month != null && day == null) {
-      // delete full month
-      const m = month.toString().padStart(2,'0');
-      const nextMonth = month === 12 ? '01' : (month + 1).toString().padStart(2,'0');
-      const nextYear = month === 12 ? year + 1 : year;
-      start = `${year.toString().padStart(4,'0')}-${m}-01T00:00:00.000Z`;
-      end = `${nextYear.toString().padStart(4,'0')}-${nextMonth}-01T00:00:00.000Z`;
-    } else if (month != null && day != null) {
-      // delete single day
-      const m = month.toString().padStart(2,'0');
-      const d = day.toString().padStart(2,'0');
-      const date = `${year.toString().padStart(4,'0')}-${m}-${d}`;
+
+    if (month === undefined) {
+      // full year
+      end = `${(year + 1).toString().padStart(4, '0')}-01-01T00:00:00.000Z`;
+    } else if (day === undefined) {
+      // full month
+      const m = (month + 1).toString().padStart(2, '0'); // month is 0-based
+      const nextMonth = month === 11 ? '01' : (month + 2).toString().padStart(2, '0');
+      const nextYear = month === 11 ? year + 1 : year;
+      start = `${year.toString().padStart(4, '0')}-${m}-01T00:00:00.000Z`;
+      end = `${nextYear.toString().padStart(4, '0')}-${nextMonth}-01T00:00:00.000Z`;
+    } else {
+      // single day
+      const m = (month + 1).toString().padStart(2, '0');
+      const d = day.toString().padStart(2, '0');
+      const date = `${year.toString().padStart(4, '0')}-${m}-${d}`;
       start = `${date}T00:00:00.000Z`;
       // next day
-      const next = new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000);
+      const next = new Date(new Date(date).getTime() + 86400000);
       end = next.toISOString();
-    } else {
-      // fallback: delete all
-      await db.delete(expenses).run();
-      set({ items: [] });
-      return;
     }
-    // perform delete by date range
-    await db.delete(expenses)
-      .where(and(
-        gte(expenses.date, start),
-        lt(expenses.date, end)
-      ))
+
+     await db
+      .delete(expenses)
+      .where(and(gte(expenses.date, start), lt(expenses.date, end)))
       .run();
-    const updated = await db.select().from(expenses).all();
+
+     const updated = await db.select().from(expenses).all();
     set({ items: updated });
-  },
+
+    },
+
 
   updateExpense: async (id, updatedData) => {
   
