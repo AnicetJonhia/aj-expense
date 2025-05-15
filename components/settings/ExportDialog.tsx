@@ -8,6 +8,10 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import { format } from 'date-fns';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import Toast from 'react-native-toast-message';
+
+
 
 type ComboboxItem = { label: string; value: string };
 
@@ -59,16 +63,54 @@ export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; s
     });
   }, [items, year, month, day]);
 
-  const handleExport = async () => {
-    // build HTML
-    let html = `<h1>Expenses Report</h1><p>Filter: ${year}${month?'-'+month:''}${day?'-'+day:''}</p><table border="1" style="width:100%;border-collapse:collapse;">` +
-               '<tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th></tr>' +
-               filtered.map(e => `<tr><td>${format(new Date(e.date),'yyyy-MM-dd')}</td><td>${e.title}</td><td>${e.category}</td><td>${e.amount}</td></tr>`).join('') +
-               '</table>';
-    const { uri } = await Print.printToFileAsync({ html });
-    await Sharing.shareAsync(uri, { mimeType: 'application/pdf' });
-    setIsOpen(false);
-  };
+  
+
+
+const handleExport = async () => {
+  const dateNow = format(new Date(), 'yyyy-MM-dd');
+  const fileName = `AJExpenseExportData_${dateNow}.pdf`;
+  const newPath = `${FileSystem.cacheDirectory}${fileName}`;
+  const message = `Data Export  to ${fileName}`;
+
+  const html = `
+    <h1>Expenses Report</h1>
+    <p>Filter: ${year}${month ? '-' + month : ''}${day ? '-' + day : ''}</p>
+    <table border="1" style="width:100%;border-collapse:collapse;">
+      <tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th></tr>
+      ${filtered.map(e => `
+        <tr>
+          <td>${format(new Date(e.date), 'yyyy-MM-dd')}</td>
+          <td>${e.title}</td>
+          <td>${e.category}</td>
+          <td>${e.amount}</td>
+        </tr>`).join('')}
+    </table>
+  `;
+
+  const { uri } = await Print.printToFileAsync({ html });
+
+  // Copier le fichier avec un nom personnalisé
+  await FileSystem.copyAsync({
+    from: uri,
+    to: newPath,
+  });
+
+  // Partager le fichier renommé
+  await Sharing.shareAsync(newPath, {
+    mimeType: 'application/pdf',
+    dialogTitle: `Share ${fileName}`,
+  });
+
+  setIsOpen(false);
+  Toast.show({
+    type: 'success',
+    text1:  message,
+    text2: "Your expenses were successfully exported"
+  });
+
+};
+
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
