@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, TextInput } from 'react-native';
+import { View, ScrollView} from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -8,13 +8,15 @@ import { useColorScheme } from 'nativewind';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import  ExportDialog  from '@/components/settings/ExportDialog';
 import ResetDataDialog from '@/components/settings/ResetDataDialog';
-
+import {Input} from "@/components/ui/input"
 import {
   requestNotificationPermissions,
   scheduleDailyReminder,
   cancelDailyReminder,
   scheduleExpenseAlert,
 } from '@/services/notifications';
+import { Dialog,DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+
 
 
 
@@ -31,6 +33,7 @@ export default function SettingsScreen() {
   const [dailyReminderEnabled, setDailyReminderEnabled] = useState<boolean>(false);
   const [expenseAlertEnabled, setExpenseAlertEnabled] = useState<boolean>(false);
   const [alertThreshold, setAlertThreshold] = useState<number>(1000);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -40,7 +43,10 @@ export default function SettingsScreen() {
 
    const toggleDaily = async (on: boolean) => {
     setDailyReminderEnabled(on);
-    if (on) await scheduleDailyReminder();
+    if (on) {
+     await scheduleDailyReminder();
+     setIsOpen(true);
+     }
     else await cancelDailyReminder();
   };
 
@@ -79,19 +85,21 @@ export default function SettingsScreen() {
         {/* Notifications Section */}
         <Text className="text-lg font-semibold text-primary mt-6 mb-2">Notifications</Text>
         <View className=" gap-2">
-          <View className="flex-row items-center justify-between mb-4">
-            <Label>Daily Reminder</Label>
+          <View className="flex-row items-center  gap-2">
+            
             <Switch
               checked={dailyReminderEnabled}
               onCheckedChange={toggleDaily}
             />
+            <Label>Daily Reminder</Label>
         </View>
-          <View className="flex-row items-center justify-between mb-4">
-            <Label>Expense Alerts</Label>
+          <View className="flex-row items-center gap-2">
+           
             <Switch
               checked={expenseAlertEnabled}
               onCheckedChange={toggleExpenseAlert}
             />
+             <Label>Expense Alerts</Label>
         </View>
         </View>
 
@@ -122,15 +130,23 @@ export default function SettingsScreen() {
       </ScrollView>
 
       {expenseAlertEnabled && (
+
+         <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              
+              <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
+                <DialogHeader><DialogTitle>Export Expenses</DialogTitle></DialogHeader>
           <View className="mb-4">
             <Label>Alert Threshold (Ar)</Label>
-            <TextInput
+            <Input
               keyboardType="numeric"
               value={String(alertThreshold)}
               onChangeText={txt => setAlertThreshold(Number(txt))}
               className="border px-3 py-2 rounded"
             />
           </View>
+
+          </DialogContent>
+          </Dialog>
         )}
 
 
