@@ -36,14 +36,16 @@ export default function SettingsScreen() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
 
-  useEffect(() => {
-      fetchExpenses();
-    }, []);
+   useEffect(() => {
+    fetchExpenses();
+    requestNotificationPermissions();
+  }, []);
+
 
 
    const toggleDaily = async (on: boolean) => {
     setDailyReminderEnabled(on);
-    if (on)  await scheduleDailyReminder();
+    if (on) await scheduleDailyReminder();
     else await cancelDailyReminder();
   };
 
