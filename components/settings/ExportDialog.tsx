@@ -105,7 +105,7 @@ const handleExport = async () => {
   setIsOpen(false);
   Toast.show({
     type: 'success',
-    text1:  message,
+    text1:  String(message),
     text2: "Your expenses were successfully exported"
   });
 
