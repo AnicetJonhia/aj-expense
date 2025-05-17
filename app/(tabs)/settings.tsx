@@ -13,15 +13,23 @@ import {
   requestNotificationPermissions,
   scheduleDailyReminder,
   cancelDailyReminder,
-  scheduleExpenseAlert,
-} from '@/services/notifications';
-import { Dialog,DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 
+} from '@/services/notifications';
+import { Dialog,DialogContent, DialogHeader, DialogTitle,  } from '@/components/ui/dialog';
+import { useSettingsStore } from '@/store/useSettingsStore';
+import {scheduleNotification} from '@/services/notifications';
 
 
 
 export default function SettingsScreen() {
    const { fetchExpenses } = useExpenseStore();
+    const { 
+    expenseAlertEnabled, 
+    alertThreshold,
+    setExpenseAlertEnabled,
+    setAlertThreshold,
+    loadSettings
+  } = useSettingsStore();
   const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -31,9 +39,13 @@ export default function SettingsScreen() {
 
 
   const [dailyReminderEnabled, setDailyReminderEnabled] = useState<boolean>(false);
-  const [expenseAlertEnabled, setExpenseAlertEnabled] = useState<boolean>(false);
-  const [alertThreshold, setAlertThreshold] = useState<number>(1000);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
 
 
    useEffect(() => {
@@ -45,17 +57,25 @@ export default function SettingsScreen() {
 
    const toggleDaily = async (on: boolean) => {
     setDailyReminderEnabled(on);
-    if (on) await scheduleDailyReminder();
-    else await cancelDailyReminder();
+  if (on) {
+    await scheduleNotification(
+      {
+        title: "💸 Daily Reminder",
+        body: "Don't forget to log your expenses today!",
+        priority: 'high'
+      },
+      { 
+        hour: 20, 
+        minute: 0, 
+        repeats: true 
+      }
+    );
+  } else {
+    await cancelDailyReminder();
   };
 
   const toggleExpenseAlert = async (on: boolean) => {
-    setExpenseAlertEnabled(on);
-    if (on) {
-      await scheduleExpenseAlert(alertThreshold);
-      setIsOpen(true)
-    }
-    // sinon tu pourrais annuler, mais ici on envoie à chaque dépassement immédiatement
+    await setExpenseAlertEnabled(on);
   };
 
   const toggleColorScheme = () => {

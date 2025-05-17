@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { db } from '@/db/client';
 import { expenses } from '@/db/schema';
 import { eq, gte, lt, and } from 'drizzle-orm';
+import { useSettingsStore } from '@/store/useSettingsStore';
+import { scheduleExpenseAlert } from "@/services/notifications";
 
 type Expense = {
   id: number;
@@ -33,6 +35,20 @@ export const useExpenseStore = create<ExpenseStore>((set) => ({
   addExpense: async (expense) => {
     await db.insert(expenses).values(expense).run();
     const updated = await db.select().from(expenses).all();
+
+    // Vérifier l'alerte
+  const { expenseAlertEnabled, alertThreshold } = useSettingsStore.getState();
+  if (expenseAlertEnabled) {
+    const today = new Date().toISOString().split('T')[0];
+    const todayExpenses = updated.filter(e => e.date.startsWith(today));
+    const total = todayExpenses.reduce((acc, e) => acc + e.amount, 0);
+    
+    if (total > alertThreshold) {
+      await scheduleExpenseAlert(alertThreshold, total);
+    }
+  }
+
+
     set({ items: updated });
   },
 

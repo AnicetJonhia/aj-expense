@@ -1,8 +1,8 @@
-// services/notifications.ts
+
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
-// Demande la permission (à appeler une fois, p.ex. au lancement de l’app)
+
 export async function requestNotificationPermissions() {
   const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
   if (status !== 'granted') {
@@ -10,12 +10,20 @@ export async function requestNotificationPermissions() {
   }
 }
 
+async function checkNotificationsCompat() {
+  const { status } = await Notifications.getPermissionsAsync();
+  return status === 'granted';
+}
+
 // Rappel quotidien à 20h00
 export async function scheduleDailyReminder() {
-  return Notifications.scheduleNotificationAsync({
+    if (!(await checkNotificationsCompat())) return;
+  
+  await Notifications.scheduleNotificationAsync({
     content: {
       title: "💸 Daily Reminder",
       body: "Don't forget to log your expenses today!",
+       priority: Notifications.AndroidNotificationPriority.HIGH
     },
     trigger: {
       hour: 20,
@@ -25,19 +33,58 @@ export async function scheduleDailyReminder() {
   });
 }
 
+
 export async function cancelDailyReminder() {
   const all = await Notifications.getAllScheduledNotificationsAsync();
-  await Promise.all(all.map(n => Notifications.cancelScheduledNotificationAsync(n.identifier)));
+  const reminders = all.filter(n => 
+    n.content.title === "💸 Daily Reminder" &&
+    n.content.body === "Don't forget to log your expenses today!"
+  );
+  await Promise.all(reminders.map(n => 
+    Notifications.cancelScheduledNotificationAsync(n.identifier)
+  ));
 }
 
-// Notification d’alerte de seuil (immédiate)
 export async function scheduleExpenseAlert(threshold: number, currentTotal: number) {
-  return Notifications.scheduleNotificationAsync({
+  await Notifications.scheduleNotificationAsync({
     content: {
       title: "🚨 Expense Alert",
-      body: `You've spent ${currentTotal} Ar today (threshold: ${threshold}).`,
+      body: `You've spent ${currentTotal} Ar today (threshold: ${threshold} Ar).`,
       sound: true,
     },
     trigger: null,
+  });
+}
+
+
+
+
+
+// Configurer les canaux Android
+export async function configureChannels() {
+  await Notifications.setNotificationChannelAsync('expenses', {
+    name: 'Expense Alerts',
+    importance: Notifications.AndroidImportance.HIGH,
+    vibrationPattern: [0, 250, 250, 250],
+  });
+}
+
+// Vérifier les permissions
+export async function verifyPermissions() {
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status !== 'granted') {
+    await Notifications.requestPermissionsAsync();
+  }
+  return status === 'granted';
+}
+
+// Planifier une notification
+export async function scheduleNotification(content: Notifications.NotificationContentInput, trigger: Notifications.NotificationTriggerInput) {
+  await configureChannels();
+  if (!await verifyPermissions()) return;
+  
+  return Notifications.scheduleNotificationAsync({
+    content,
+    trigger,
   });
 }
