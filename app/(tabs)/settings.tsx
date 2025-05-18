@@ -22,6 +22,7 @@ import {scheduleNotification} from '@/services/notifications';
 
 
 export default function SettingsScreen() {
+
    const { fetchExpenses } = useExpenseStore();
     const { 
     expenseAlertEnabled, 
@@ -186,4 +187,4 @@ export default function SettingsScreen() {
                        
     </View>
   );
-}
+}}
