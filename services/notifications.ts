@@ -1,12 +1,12 @@
 
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
+
 
 
 export async function requestNotificationPermissions() {
-  const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+  const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') {
-    await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    await Notifications.requestPermissionsAsync();
   }
 }
 
@@ -17,13 +17,13 @@ async function checkNotificationsCompat() {
 
 // Rappel quotidien à 20h00
 export async function scheduleDailyReminder() {
-    if (!(await checkNotificationsCompat())) return;
-  
+  if (!(await checkNotificationsCompat())) return;
+
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "💸 Daily Reminder",
       body: "Don't forget to log your expenses today!",
-       priority: Notifications.AndroidNotificationPriority.HIGH
+      priority: Notifications.AndroidNotificationPriority.HIGH
     },
     trigger: {
       hour: 20,
@@ -32,7 +32,6 @@ export async function scheduleDailyReminder() {
     },
   });
 }
-
 
 export async function cancelDailyReminder() {
   const all = await Notifications.getAllScheduledNotificationsAsync();
