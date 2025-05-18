@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Text } from '@/components/ui/text';
 import { ThemeProvider } from "@/hooks/ThemeProvider";
 import { HeaderRight } from "@/components/HeaderRight";
-import { View , Image} from 'react-native';
+import { View } from 'react-native';
 import '@/global.css';
 import Toast from 'react-native-toast-message';
 import { PortalHost } from '@rn-primitives/portal';
@@ -41,11 +41,7 @@ export default function RootLayout() {
       options={{
         headerTitle: () => (
           <View className="flex-row items-center w-full px-4">
-            <Image 
-              source={require('@/assets/images/icon.png')}
-              className="w-6 h-6 mr-2"
-              resizeMode="contain"
-            />
+          
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
