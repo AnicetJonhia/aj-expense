@@ -58,22 +58,24 @@ export default function SettingsScreen() {
 
    const toggleDaily = async (on: boolean) => {
     setDailyReminderEnabled(on);
-  if (on) {
-    await scheduleNotification(
-      {
-        title: "💸 Daily Reminder",
-        body: "Don't forget to log your expenses today!",
-        priority: 'high'
-      },
-      { 
-        hour: 20, 
-        minute: 0, 
-        repeats: true 
-      }
-    );
-  } else {
-    await cancelDailyReminder();
-  };
+    if (on) {
+      await scheduleNotification(
+        {
+          title: "💸 Daily Reminder",
+          body: "Don't forget to log your expenses today!",
+          priority: 'high'
+        },
+        { 
+          hour: 20, 
+          minute: 0, 
+          repeats: true 
+        }
+      );
+    } else {
+      await cancelDailyReminder();
+    }
+   }
+
 
   const toggleExpenseAlert = async (on: boolean) => {
     await setExpenseAlertEnabled(on);
@@ -187,4 +189,4 @@ export default function SettingsScreen() {
                        
     </View>
   );
-}}
+}
