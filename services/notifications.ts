@@ -19,7 +19,7 @@ async function checkNotificationsCompat() {
 export async function scheduleDailyReminder() {
   if (!(await checkNotificationsCompat())) return;
 
-  // Annuler les rappels existants avant d'en créer un nouveau
+  
   await cancelDailyReminder();
 
   return Notifications.scheduleNotificationAsync({
