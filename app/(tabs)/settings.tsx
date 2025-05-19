@@ -100,15 +100,18 @@ export default function SettingsScreen() {
         {/* Appearance Section */}
         <Text className="text-lg font-semibold text-primary mt-2 mb-2">Appearance</Text>
         <View className="flex-row items-center justify-between mb-4">
-          <View className="flex-row items-center gap-2">
-              <Switch
+          <View className="flex-row  items-center gap-2">
+              
+              <View className='flex-1'>
+                <Label nativeID="mode-label"  onPress={toggleTheme}>
+                {isDark ? 'Dark Mode' : 'Light Mode'}
+              </Label>
+              </View>
+              <View className='"ml-auto'><Switch
                 checked={isDark}
                 onCheckedChange={toggleTheme}
                 nativeID="mode-switch"
-              />
-              <Label nativeID="mode-label" onPress={toggleTheme}>
-                {isDark ? 'Dark Mode' : 'Light Mode'}
-              </Label>
+              /></View>
           </View>
         </View>
 
@@ -117,22 +120,30 @@ export default function SettingsScreen() {
         <View className=" gap-2">
           <View className="flex-row items-center  gap-2">
             
-            <Switch
+            <View className='flex-1'>
+            <Label nativeID='daily-reminder'>Daily Reminder</Label>
+            </View>
+            <View className='ml-auto'>
+              <Switch
               nativeID='daily-reminder'
               checked={dailyReminderEnabled}
               onCheckedChange={handleDailyReminder}
             />
-
-            <Label nativeID='daily-reminder'>Daily Reminder</Label>
+            </View>
+            
         </View>
           <View className="flex-row items-center gap-2">
-           
-               <Switch 
+           <View className='flex-1'>
+             <Label nativeID='expense-alert'>Expense Alerts</Label>
+           </View>
+          <View className='ml-auto'>
+             <Switch 
                 nativeID='expense-alert'
                 checked={expenseAlertEnabled}
                 onCheckedChange={handleExpenseAlert}
               />
-             <Label nativeID='expense-alert'>Expense Alerts</Label>
+          </View>
+            
         </View>
         </View>
 
