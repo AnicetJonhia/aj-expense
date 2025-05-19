@@ -27,9 +27,17 @@ export default function SettingsScreen() {
       loadSettings
     } = useSettingsStore();
   const { colorScheme, setColorScheme } = useColorScheme();
- 
 
-  const isDarkMode = colorScheme === 'dark'
+  // 2) On garde un état local synchronisé
+  const [isDark, setIsDark] = useState(colorScheme === 'dark')
+
+
+  useEffect(() => {
+    setIsDark(colorScheme === 'dark')
+  }, [colorScheme])
+
+
+
   const [resetOpen, setResetOpen] = useState<boolean>(false);
   const [exportOpen, setExportOpen] = useState<boolean>(false);
 
@@ -75,10 +83,13 @@ export default function SettingsScreen() {
     }
   };
 
-   const toggleTheme = () => {
-    setColorScheme(isDarkMode ? 'light' : 'dark')
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev
+      setColorScheme(next ? 'dark' : 'light')
+      return next
+    })
   }
-
   return (
     <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
       <View className="border-b border-gray-300 dark:border-gray-600 pb-2">
@@ -90,17 +101,14 @@ export default function SettingsScreen() {
         <Text className="text-lg font-semibold text-primary mt-2 mb-2">Appearance</Text>
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center gap-2">
-             <Switch
-              checked={isDarkMode}
-                  onCheckedChange={toggleTheme}
-                  nativeID="mode-switch"
-                />
-                <Label
-                  nativeID="mode-label"
-                  onPress={toggleTheme}
-                >
-              {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-            </Label>
+              <Switch
+                checked={isDark}
+                onCheckedChange={toggleTheme}
+                nativeID="mode-switch"
+              />
+              <Label nativeID="mode-label" onPress={toggleTheme}>
+                {isDark ? 'Dark Mode' : 'Light Mode'}
+              </Label>
           </View>
         </View>
 
