@@ -4,11 +4,11 @@ import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label'; 
-import { useColorScheme } from 'nativewind';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import  ExportDialog  from '@/components/settings/ExportDialog';
 import ResetDataDialog from '@/components/settings/ResetDataDialog';
-import {Input} from "@/components/ui/input"
+import {Input} from "@/components/ui/input";
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 import { Dialog,DialogContent, DialogHeader, DialogTitle,  } from '@/components/ui/dialog';
 import { useSettingsStore } from '@/store/useSettingsStore';
@@ -27,9 +27,9 @@ export default function SettingsScreen() {
       loadSettings
     } = useSettingsStore();
   const { colorScheme, setColorScheme } = useColorScheme();
-  const isDark = colorScheme === 'dark';
+ 
 
-  const [checked, setChecked] = useState(isDark);
+  const isDarkMode = colorScheme === 'dark'
   const [resetOpen, setResetOpen] = useState<boolean>(false);
   const [exportOpen, setExportOpen] = useState<boolean>(false);
 
@@ -75,11 +75,9 @@ export default function SettingsScreen() {
     }
   };
 
-  const toggleColorScheme = () => {
-    const newMode = isDark ? 'light' : 'dark';
-    setColorScheme(newMode);
-    setChecked(!isDark);
-  };
+   const toggleTheme = () => {
+    setColorScheme(isDarkMode ? 'light' : 'dark')
+  }
 
   return (
     <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
@@ -92,9 +90,16 @@ export default function SettingsScreen() {
         <Text className="text-lg font-semibold text-primary mt-2 mb-2">Appearance</Text>
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center gap-2">
-            <Switch checked={checked} onCheckedChange={toggleColorScheme} nativeID="mode" />
-            <Label nativeID="mode" onPress={toggleColorScheme}>
-              {checked ? 'Dark Mode' : 'Light Mode'}
+             <Switch
+              checked={isDarkMode}
+                  onCheckedChange={toggleTheme}
+                  nativeID="mode-switch"
+                />
+                <Label
+                  nativeID="mode-label"
+                  onPress={toggleTheme}
+                >
+              {isDarkMode ? 'Dark Mode' : 'Light Mode'}
             </Label>
           </View>
         </View>
