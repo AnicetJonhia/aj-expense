@@ -114,7 +114,7 @@ const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
    
       <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
         
-        <TabHeader title={"My Expenses"} onAddPress={() => setIsAddOpen(true)} />
+        <TabHeader title={"💰 My Expenses"} onAddPress={() => setIsAddOpen(true)} />
 
         <View className="flex flex-row  gap-2">
             

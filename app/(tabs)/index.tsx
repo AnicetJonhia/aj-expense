@@ -15,7 +15,7 @@ export default function DashboardScreen() {
   return (
     <>
     <View className="flex-1 p-4 gap-2 bg-white dark:bg-black">
-    <TabHeader title={"Dashboard"} onAddPress={() => setIsAddOpen(true)} />
+    <TabHeader title={"🏠 Dashboard"} onAddPress={() => setIsAddOpen(true)} />
     <ScrollView showsVerticalScrollIndicator={false} className="flex-1 gap-2 ">
       <GlobalDashboard/>
       <Separator className="mt-4"/>

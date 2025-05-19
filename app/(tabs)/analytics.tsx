@@ -99,7 +99,7 @@ export default function AnalyticsScreen() {
 
   return (
     <View className="flex-1 p-4 gap-2 bg-white dark:bg-black">
-      <TabHeader title="Analytics" onAddPress={() => setIsAddOpen(true)} />
+      <TabHeader title="🔍 Analytics" onAddPress={() => setIsAddOpen(true)} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Top-Categories */}
