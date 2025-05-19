@@ -6,8 +6,9 @@ import * as Notifications from 'expo-notifications';
 export async function requestNotificationPermissions() {
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') {
-    await Notifications.requestPermissionsAsync();
+    return await Notifications.requestPermissionsAsync();
   }
+  return { status };
 }
 
 async function checkNotificationsCompat() {
@@ -15,15 +16,18 @@ async function checkNotificationsCompat() {
   return status === 'granted';
 }
 
-// Rappel quotidien à 20h00
 export async function scheduleDailyReminder() {
   if (!(await checkNotificationsCompat())) return;
 
-  await Notifications.scheduleNotificationAsync({
+  // Annuler les rappels existants avant d'en créer un nouveau
+  await cancelDailyReminder();
+
+  return Notifications.scheduleNotificationAsync({
     content: {
       title: "💸 Daily Reminder",
       body: "Don't forget to log your expenses today!",
-      priority: Notifications.AndroidNotificationPriority.HIGH
+      priority: Notifications.AndroidNotificationPriority.HIGH,
+      channelId: 'expenses',
     },
     trigger: {
       hour: 20,
@@ -32,6 +36,7 @@ export async function scheduleDailyReminder() {
     },
   });
 }
+
 
 export async function cancelDailyReminder() {
   const all = await Notifications.getAllScheduledNotificationsAsync();
@@ -45,11 +50,15 @@ export async function cancelDailyReminder() {
 }
 
 export async function scheduleExpenseAlert(threshold: number, currentTotal: number) {
-  await Notifications.scheduleNotificationAsync({
+  await configureChannels();
+  if (!(await verifyPermissions())) return;
+
+  return Notifications.scheduleNotificationAsync({
     content: {
       title: "🚨 Expense Alert",
       body: `You've spent ${currentTotal} Ar today (threshold: ${threshold} Ar).`,
       sound: true,
+      channelId: 'expenses',
     },
     trigger: null,
   });

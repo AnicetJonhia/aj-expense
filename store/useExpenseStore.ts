@@ -32,25 +32,24 @@ export const useExpenseStore = create<ExpenseStore>((set) => ({
     set({ items: data });
   },
 
-  addExpense: async (expense) => {
-    await db.insert(expenses).values(expense).run();
-    const updated = await db.select().from(expenses).all();
+  // Dans la fonction addExpense :
+    addExpense: async (expense) => {
+      await db.insert(expenses).values(expense).run();
+      const updated = await db.select().from(expenses).all();
 
-    // Vérifier l'alerte
-  const { expenseAlertEnabled, alertThreshold } = useSettingsStore.getState();
-  if (expenseAlertEnabled) {
-    const today = new Date().toISOString().split('T')[0];
-    const todayExpenses = updated.filter(e => e.date.startsWith(today));
-    const total = todayExpenses.reduce((acc, e) => acc + e.amount, 0);
-    
-    if (total > alertThreshold) {
-      await scheduleExpenseAlert(alertThreshold, total);
-    }
-  }
+      const { expenseAlertEnabled, alertThreshold } = useSettingsStore.getState();
+      if (expenseAlertEnabled) {
+        const today = new Date().toISOString().split('T')[0];
+        const todayExpenses = updated.filter(e => e.date.startsWith(today));
+        const total = todayExpenses.reduce((acc, e) => acc + e.amount, 0);
+        
+        if (total > alertThreshold) {
+          await scheduleExpenseAlert(alertThreshold, total);
+        }
+      }
 
-
-    set({ items: updated });
-  },
+      set({ items: updated });
+    },
 
   deleteExpense: async (id) => {
     await db.delete(expenses).where(eq(expenses.id, id)).run();

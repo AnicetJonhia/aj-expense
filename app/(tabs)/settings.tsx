@@ -9,28 +9,23 @@ import { useExpenseStore } from '@/store/useExpenseStore';
 import  ExportDialog  from '@/components/settings/ExportDialog';
 import ResetDataDialog from '@/components/settings/ResetDataDialog';
 import {Input} from "@/components/ui/input"
-import {
-  requestNotificationPermissions,
-  scheduleDailyReminder,
-  cancelDailyReminder,
 
-} from '@/services/notifications';
 import { Dialog,DialogContent, DialogHeader, DialogTitle,  } from '@/components/ui/dialog';
 import { useSettingsStore } from '@/store/useSettingsStore';
-import {scheduleNotification} from '@/services/notifications';
-
-
+import { requestNotificationPermissions, scheduleDailyReminder, cancelDailyReminder } from '@/services/notifications';
 
 export default function SettingsScreen() {
 
    const { fetchExpenses } = useExpenseStore();
     const { 
-    expenseAlertEnabled, 
-    alertThreshold,
-    setExpenseAlertEnabled,
-    setAlertThreshold,
-    loadSettings
-  } = useSettingsStore();
+      expenseAlertEnabled,
+      alertThreshold,
+      dailyReminderEnabled,
+      setExpenseAlertEnabled,
+      setAlertThreshold,
+      setDailyReminderEnabled,
+      loadSettings
+    } = useSettingsStore();
   const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -39,14 +34,15 @@ export default function SettingsScreen() {
   const [exportOpen, setExportOpen] = useState<boolean>(false);
 
 
-  const [dailyReminderEnabled, setDailyReminderEnabled] = useState<boolean>(false);
+
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
+    useEffect(() => {
+      loadSettings();
+      requestNotificationPermissions();
+    }, []);
 
 
    useEffect(() => {
@@ -56,29 +52,27 @@ export default function SettingsScreen() {
 
 
 
-   const toggleDaily = async (on: boolean) => {
-    setDailyReminderEnabled(on);
-    if (on) {
-      await scheduleNotification(
-        {
-          title: "💸 Daily Reminder",
-          body: "Don't forget to log your expenses today!",
-          priority: 'high'
-        },
-        { 
-          hour: 20, 
-          minute: 0, 
-          repeats: true 
-        }
-      );
-    } else {
-      await cancelDailyReminder();
+   const handleDailyReminder = async (enabled: boolean) => {
+    try {
+      await setDailyReminderEnabled(enabled);
+      if (enabled) {
+        await scheduleDailyReminder();
+      } else {
+        await cancelDailyReminder();
+      }
+    } catch (error) {
+      console.error('Error with daily reminder:', error);
     }
-   }
+  };
 
 
-  const toggleExpenseAlert = async (on: boolean) => {
-    await setExpenseAlertEnabled(on);
+
+    const handleExpenseAlert = async (enabled: boolean) => {
+    await setExpenseAlertEnabled(enabled);
+    if (!enabled) {
+ 
+      await setAlertThreshold(100000);
+    }
   };
 
   const toggleColorScheme = () => {
@@ -110,18 +104,21 @@ export default function SettingsScreen() {
         <View className=" gap-2">
           <View className="flex-row items-center  gap-2">
             
-            <Switch   nativeID='daily-reminder'
+            <Switch
+              nativeID='daily-reminder'
               checked={dailyReminderEnabled}
-              onCheckedChange={toggleDaily}
+              onCheckedChange={handleDailyReminder}
             />
+
             <Label nativeID='daily-reminder'>Daily Reminder</Label>
         </View>
           <View className="flex-row items-center gap-2">
            
-            <Switch nativeID='expense-alert'
-              checked={expenseAlertEnabled}
-              onCheckedChange={toggleExpenseAlert}
-            />
+               <Switch 
+                nativeID='expense-alert'
+                checked={expenseAlertEnabled}
+                onCheckedChange={handleExpenseAlert}
+              />
              <Label nativeID='expense-alert'>Expense Alerts</Label>
         </View>
         </View>
