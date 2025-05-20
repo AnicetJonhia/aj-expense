@@ -79,18 +79,18 @@ export default function ThresholdDialog({ isOpen, setIsOpen }: ThresholdDialogPr
         </View>
         
         <DialogFooter>
-          <View className="flex-row justify-end space-x-2">
+          <View className="flex-row gap-2 ">
             <Button
               variant="outline"
               onPress={handleCancel}
-              className="min-w-[80px]"
+              className='flex-1'
             >
               <Text>Cancel</Text>
             </Button>
             <Button
               variant="default"
               onPress={handleSave}
-              className="min-w-[80px]"
+              className="flex-1"
             >
               <Text className="text-white font-medium">Save</Text>
             </Button>

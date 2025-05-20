@@ -167,9 +167,9 @@ export default function SettingsScreen() {
         <View className=" gap-2">
           <View className="flex-row items-center  gap-2">
             
-            <View className='flex-1 gap-2'>
+            <View className='flex-1 '>
             <Label nativeID='daily-reminder'>Daily Reminder</Label>
-            <Text>
+            <Text className="text-xs mt-2 text-gray-500">
                 Receive a reminder at 8:00 PM daily
               </Text>
             </View>
@@ -184,9 +184,9 @@ export default function SettingsScreen() {
             
         </View>
           <View className="flex-row items-center gap-2">
-            <View className='flex-1 gap-2'>
+            <View className='flex-1 '>
               <Label nativeID='expense-alert'>Expense Alerts</Label>
-              <Text>
+              <Text className="text-xs mt-2 text-gray-500">
                   Get notified when daily expenses exceed your threshold
                 </Text>
             </View>
