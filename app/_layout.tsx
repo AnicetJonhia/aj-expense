@@ -8,29 +8,13 @@ import { View } from 'react-native';
 import '@/global.css';
 import Toast from 'react-native-toast-message';
 import { PortalHost } from '@rn-primitives/portal';
-import React , {useEffect} from 'react';
-import Notifications from "expo-notifications";
+import React from 'react';
+import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 
 
 export default function RootLayout() {
-  useEffect(() => {
-    const setupChannels = async () => {
-      await Notifications.setNotificationChannelAsync('daily-reminders', {
-        name:'Daily reminder',
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: [0, 250, 250, 250],
-      });
 
-      await Notifications.setNotificationChannelAsync('expense-alerts', {
-        name: 'Expense Alert',
-        importance: Notifications.AndroidImportance.MAX,
-  
-      });
-    };
-  
-      setupChannels();
-    }, []);
-  
+  useFrameworkReady();
 
   return (
     <ThemeProvider>

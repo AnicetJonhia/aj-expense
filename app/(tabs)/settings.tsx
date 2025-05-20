@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView} from 'react-native';
+import { View, ScrollView, Platform, Alert} from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -9,87 +9,134 @@ import  ExportDialog  from '@/components/settings/ExportDialog';
 import ResetDataDialog from '@/components/settings/ResetDataDialog';
 import {Input} from "@/components/ui/input";
 import { useColorScheme } from '@/hooks/useColorScheme';
+import ThresholdDialog from '@/components/settings/ThresholdDialog'; 
+
+import { useSettingsStore } from '@/store/useSettingsStore';
+
 
 import { Dialog,DialogContent, DialogHeader, DialogTitle,  } from '@/components/ui/dialog';
-import { useSettingsStore } from '@/store/useSettingsStore';
+
 import { requestNotificationPermissions, scheduleDailyReminder, cancelDailyReminder } from '@/services/notifications';
 
 export default function SettingsScreen() {
 
    const { fetchExpenses } = useExpenseStore();
-    const { 
-      expenseAlertEnabled,
-      alertThreshold,
-      dailyReminderEnabled,
-      setExpenseAlertEnabled,
-      setAlertThreshold,
-      setDailyReminderEnabled,
-      loadSettings
-    } = useSettingsStore();
+     const { 
+    expenseAlertEnabled,
+    alertThreshold,
+    dailyReminderEnabled,
+    setExpenseAlertEnabled,
+    setDailyReminderEnabled,
+    loadSettings
+  } = useSettingsStore();
+
+
   const { colorScheme, setColorScheme } = useColorScheme();
 
-  // 2) On garde un état local synchronisé
-  const [isDark, setIsDark] = useState(colorScheme === 'dark')
+  
 
 
-  useEffect(() => {
+ 
+
+    // Local state
+  const [isDark, setIsDark] = useState(colorScheme === 'dark');
+  const [resetOpen, setResetOpen] = useState<boolean>(false);
+  const [exportOpen, setExportOpen] = useState<boolean>(false);
+  const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
+  const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
+
+   useEffect(() => {
     setIsDark(colorScheme === 'dark')
   }, [colorScheme])
 
 
-
-  const [resetOpen, setResetOpen] = useState<boolean>(false);
-  const [exportOpen, setExportOpen] = useState<boolean>(false);
-
-
-
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-
-    useEffect(() => {
-      loadSettings();
-      requestNotificationPermissions();
-    }, []);
-
-
-   useEffect(() => {
-    fetchExpenses();
-    requestNotificationPermissions();
-  }, []);
-
-
-
-   const handleDailyReminder = async (enabled: boolean) => {
-    try {
-      await setDailyReminderEnabled(enabled);
-      if (enabled) {
-        await scheduleDailyReminder();
-      } else {
-        await cancelDailyReminder();
+     // Load initial data
+  useEffect(() => {
+    const initialize = async () => {
+      await loadSettings();
+      await fetchExpenses();
+      
+      if (Platform.OS !== 'web') {
+        const { status } = await requestNotificationPermissions();
+        setPermissionStatus(status);
       }
+    };
+    
+    initialize();
+  }, []);
+  
+
+
+     const handleDailyReminder = async (enabled: boolean) => {
+    if (Platform.OS === 'web') {
+      Alert.alert('Notifications are not supported on web');
+      return;
+    }
+    
+    try {
+      if (permissionStatus !== 'granted') {
+        const { status } = await requestNotificationPermissions();
+        setPermissionStatus(status);
+        
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permission Required',
+            'Notification permission is required for reminders. Please enable notifications for this app in your device settings.'
+          );
+          return;
+        }
+      }
+      
+      await setDailyReminderEnabled(enabled);
     } catch (error) {
       console.error('Error with daily reminder:', error);
+      Alert.alert('Error', 'Failed to set daily reminder. Please try again.');
     }
   };
 
 
 
-    const handleExpenseAlert = async (enabled: boolean) => {
-    await setExpenseAlertEnabled(enabled);
-    if (!enabled) {
- 
-      await setAlertThreshold(100000);
-    }
-  };
+      const handleExpenseAlert = async (enabled: boolean) => {
+        if (Platform.OS === 'web') {
+          Alert.alert('Notifications are not supported on web');
+          return;
+        }
+        
+        try {
+          if (permissionStatus !== 'granted' && enabled) {
+            const { status } = await requestNotificationPermissions();
+            setPermissionStatus(status);
+            
+            if (status !== 'granted') {
+              Alert.alert(
+                'Permission Required',
+                'Notification permission is required for alerts. Please enable notifications for this app in your device settings.'
+              );
+              return;
+            }
+          }
+          
+          await setExpenseAlertEnabled(enabled);
+          
+          // Open threshold dialog when enabling alerts
+          if (enabled) {
+            setThresholdOpen(true);
+          }
+        } catch (error) {
+          console.error('Error with expense alert:', error);
+          Alert.alert('Error', 'Failed to set expense alert. Please try again.');
+        }
+      };
 
-  const toggleTheme = () => {
-    setIsDark(prev => {
-      const next = !prev
-      setColorScheme(next ? 'dark' : 'light')
-      return next
-    })
-  }
+      const toggleTheme = () => {
+        setIsDark(prev => {
+          const next = !prev;
+          setColorScheme(next ? 'dark' : 'light');
+          return next;
+        });
+      };
+
+
   return (
     <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
       <View className="border-b border-gray-300 dark:border-gray-600 pb-2">
@@ -120,31 +167,39 @@ export default function SettingsScreen() {
         <View className=" gap-2">
           <View className="flex-row items-center  gap-2">
             
-            <View className='flex-1'>
+            <View className='flex-1 gap-2'>
             <Label nativeID='daily-reminder'>Daily Reminder</Label>
+            <Text>
+                Receive a reminder at 8:00 PM daily
+              </Text>
             </View>
             <View className='ml-auto'>
               <Switch
-              nativeID='daily-reminder'
+              nativeID="daily-reminder"
               checked={dailyReminderEnabled}
               onCheckedChange={handleDailyReminder}
+              disabled={Platform.OS === 'web'}
             />
             </View>
             
         </View>
           <View className="flex-row items-center gap-2">
-           <View className='flex-1'>
-             <Label nativeID='expense-alert'>Expense Alerts</Label>
-           </View>
-          <View className='ml-auto'>
-             <Switch 
-                nativeID='expense-alert'
-                checked={expenseAlertEnabled}
-                onCheckedChange={handleExpenseAlert}
-              />
-          </View>
+            <View className='flex-1 gap-2'>
+              <Label nativeID='expense-alert'>Expense Alerts</Label>
+              <Text>
+                  Get notified when daily expenses exceed your threshold
+                </Text>
+            </View>
+            <View className='ml-auto'>
+              <Switch 
+                  nativeID='expense-alert'
+                  checked={expenseAlertEnabled}
+                  onCheckedChange={handleExpenseAlert}
+                />
+            </View>
             
-        </View>
+          </View>
+    
         </View>
 
         {/* Data Section */}
@@ -173,25 +228,11 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
 
-      {expenseAlertEnabled && (
-
-         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              
-              <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
-                <DialogHeader><DialogTitle>Expenses Alert</DialogTitle></DialogHeader>
-          <View className="mb-4">
-            <Label>Alert Threshold (Ar)</Label>
-            <Input
-              keyboardType="numeric"
-              value={String(alertThreshold)}
-              onChangeText={txt => setAlertThreshold(Number(txt))}
-              className="border px-3 py-2 rounded"
-            />
-          </View>
-
-          </DialogContent>
-          </Dialog>
-        )}
+        <ThresholdDialog
+            isOpen={thresholdOpen}
+            setIsOpen={setThresholdOpen}
+          />
+      
 
 
      
