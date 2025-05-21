@@ -51,7 +51,7 @@ export default function ThresholdDialog({ isOpen, setIsOpen }: ThresholdDialogPr
   
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+  <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
         <DialogHeader>
           <DialogTitle>Expense Alert Threshold</DialogTitle>
         </DialogHeader>
@@ -92,7 +92,7 @@ export default function ThresholdDialog({ isOpen, setIsOpen }: ThresholdDialogPr
               onPress={handleSave}
               className="flex-1"
             >
-              <Text className="text-white font-medium">Save</Text>
+              <Text>Save</Text>
             </Button>
           </View>
         </DialogFooter>
