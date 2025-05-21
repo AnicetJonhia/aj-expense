@@ -7,23 +7,22 @@ import { Label } from '@/components/ui/label';
 import { useExpenseStore } from '@/store/useExpenseStore';
 import  ExportDialog  from '@/components/settings/ExportDialog';
 import ResetDataDialog from '@/components/settings/ResetDataDialog';
-import {Input} from "@/components/ui/input";
+
 import { useColorScheme } from '@/hooks/useColorScheme';
 import ThresholdDialog from '@/components/settings/ThresholdDialog'; 
 
 import { useSettingsStore } from '@/store/useSettingsStore';
 
 
-import { Dialog,DialogContent, DialogHeader, DialogTitle,  } from '@/components/ui/dialog';
 
-import { requestNotificationPermissions, scheduleDailyReminder, cancelDailyReminder } from '@/services/notifications';
+
+import { requestNotificationPermissions} from '@/services/notifications';
 
 export default function SettingsScreen() {
 
    const { fetchExpenses } = useExpenseStore();
      const { 
     expenseAlertEnabled,
-    alertThreshold,
     dailyReminderEnabled,
     setExpenseAlertEnabled,
     setDailyReminderEnabled,
@@ -232,10 +231,7 @@ export default function SettingsScreen() {
             isOpen={thresholdOpen}
             setIsOpen={setThresholdOpen}
           />
-      
 
-
-     
       <ResetDataDialog
           isOpen={resetOpen}
           setIsOpen={setResetOpen}
@@ -248,7 +244,6 @@ export default function SettingsScreen() {
               isOpen={exportOpen}
               setIsOpen={setExportOpen}
             />
-                       
     </View>
   );
 }

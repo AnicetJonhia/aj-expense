@@ -102,7 +102,7 @@ export default function AnalyticsScreen() {
       <TabHeader title="🔍 Analytics" onAddPress={() => setIsAddOpen(true)} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Top-Categories */}
+  
         <Text className="text-2xl font-bold mt-4 text-gray-800 dark:text-white">🏆 Top Categories</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {topBlocks.map(({ period, category, data }, idx) => {
@@ -139,7 +139,7 @@ export default function AnalyticsScreen() {
 
         <Separator />
 
-        {/* Monthly Trend + Year selector */}
+    
         <Text className="text-2xl font-bold mt-4 mb-2 text-gray-800 dark:text-white">
           📊 Monthly Trend
         </Text>
