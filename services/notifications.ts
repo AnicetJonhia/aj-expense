@@ -32,8 +32,8 @@ export async function checkNotificationsCompat() {
   return status === 'granted';
 }
 
-// Schedule a daily reminder at 8 PM
-export async function scheduleDailyReminder() {
+// Schedule a daily reminder at specified time
+export async function scheduleDailyReminder(hour = 20, minute = 0) {
   if (Platform.OS === 'web') {
     console.log('Daily reminders not supported on web platform');
     return null;
@@ -60,8 +60,8 @@ export async function scheduleDailyReminder() {
       channelId: 'expenses',
     },
     trigger: {
-      hour: 20,
-      minute: 0,
+      hour,
+      minute,
       repeats: true,
     },
   });
@@ -127,7 +127,7 @@ export async function configureChannels() {
     importance: Notifications.AndroidImportance.HIGH,
     vibrationPattern: [0, 250, 250, 250],
     lightColor: '#FF4500',
-    sound: true,
+
   });
 }
 
