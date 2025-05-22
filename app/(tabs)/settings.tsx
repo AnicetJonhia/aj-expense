@@ -168,7 +168,7 @@ export default function SettingsScreen() {
                 <Button
                   variant="ghost"
                   onPress={() => setReminderTimeOpen(true)}
-                   className="border border-dashed border-gray-300 px-2 py-1"
+                   className="border border-dashed border-gray-300 dark:border-gray-600  px-2 py-1"
                 >
                   <Text className="text-sm">Edit Time</Text>
                 </Button>
@@ -194,7 +194,7 @@ export default function SettingsScreen() {
                 <Button
                   variant="ghost"
                   onPress={() => setThresholdOpen(true)}
-                   className="border border-dashed border-gray-300 px-2 py-1"
+                   className="border border-dashed border-gray-300 dark:border-gray-600 px-2 py-1"
                 >
                   <Text className="text-sm">Edit thresold</Text>
                 </Button>

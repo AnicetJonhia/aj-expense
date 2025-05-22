@@ -26,7 +26,7 @@ export default function DashboardScreen() {
         }}/>
            <Separator/>
         <DashboardCategoryFilter dateString={dateString} />
-        <Separator/>
+        <Separator className='mt-4'/>
     </ScrollView>
     </View>
      <AddExpenseDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} />
