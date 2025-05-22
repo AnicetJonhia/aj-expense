@@ -3,13 +3,11 @@ import { Platform } from 'react-native';
 
 // Configure default notification behavior
 Notifications.setNotificationHandler({
-  handleNotification: () => {
-    return Promise.resolve({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true
-    });
-  }
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
 });
 
 // Request notification permissions

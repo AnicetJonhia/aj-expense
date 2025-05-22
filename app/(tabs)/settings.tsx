@@ -127,6 +127,7 @@ export default function SettingsScreen() {
   };
 
   return (
+    <>
     <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
       <View className="border-b border-gray-300 dark:border-gray-600 pb-2">
         <Text className="text-2xl font-bold text-primary">⚙️ Settings</Text>
@@ -165,9 +166,9 @@ export default function SettingsScreen() {
             <View className='ml-auto flex-row items-center gap-2'>
               {dailyReminderEnabled && (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   onPress={() => setReminderTimeOpen(true)}
-                  className="px-2 py-1"
+                   className="border border-dashed border-gray-300 px-2 py-1"
                 >
                   <Text className="text-sm">Edit Time</Text>
                 </Button>
@@ -188,7 +189,16 @@ export default function SettingsScreen() {
                 Get notified when daily expenses exceed your threshold
               </Text>
             </View>
-            <View className='ml-auto'>
+            <View className='ml-auto flex-row items-center gap-2'>
+              {expenseAlertEnabled && (
+                <Button
+                  variant="ghost"
+                  onPress={() => setThresholdOpen(true)}
+                   className="border border-dashed border-gray-300 px-2 py-1"
+                >
+                  <Text className="text-sm">Edit thresold</Text>
+                </Button>
+              )}
               <Switch 
                 nativeID='expense-alert'
                 checked={expenseAlertEnabled}
@@ -225,7 +235,10 @@ export default function SettingsScreen() {
         </View>
       </ScrollView>
 
-      <ThresholdDialog
+     
+    </View>
+    
+     <ThresholdDialog
         isOpen={thresholdOpen}
         setIsOpen={setThresholdOpen}
       />
@@ -244,6 +257,6 @@ export default function SettingsScreen() {
         isOpen={exportOpen}
         setIsOpen={setExportOpen}
       />
-    </View>
+    </>
   );
 }
