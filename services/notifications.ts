@@ -1,14 +1,19 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
-// Configure default notification behavior
+
+
+// Configure default notification behavior (Expo SDK ≥ 48)
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
+
+    shouldShowBanner: true,  
+    shouldShowList: true,    
+    shouldPlaySound: true,  
+    shouldSetBadge: true,   
   }),
 });
+
 
 // Request notification permissions
 export async function requestNotificationPermissions() {

@@ -72,14 +72,14 @@ const DialogOverlayNative = React.forwardRef<
       ref={ref}
     >
        <Animated.View
-    entering={FadeIn.duration(150)}
-    exiting={FadeOut.duration(150)}
-    style={{
-      marginBottom: keyboardOffset > 0 ? keyboardOffset : 0,
-    }}
-  >
-    <>{children}</>
-  </Animated.View>
+        entering={FadeIn.duration(150)}
+        exiting={FadeOut.duration(150)}
+        style={{
+          marginBottom: keyboardOffset > 0 ? keyboardOffset : 0,
+        }}
+      >
+        <>{children}</>
+      </Animated.View>
     </DialogPrimitive.Overlay>
   );
 });
