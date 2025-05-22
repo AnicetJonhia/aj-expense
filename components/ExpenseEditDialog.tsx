@@ -144,12 +144,9 @@ export default function ExpenseEditDialog({
       <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
         <DialogHeader>
           <DialogTitle>Edit Expense</DialogTitle>
-          <DialogDescription>
-            Modify the fields and click Save to update.
-          </DialogDescription>
         </DialogHeader>
 
-        <View className="space-y-3 py-4">
+        <View className="space-y-3 ">
           <View>
             <Label htmlFor="title">Title:</Label>
             <Input

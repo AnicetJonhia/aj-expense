@@ -1,9 +1,11 @@
 import * as DialogPrimitive from '@rn-primitives/dialog';
 import * as React from 'react';
-import { Platform, StyleSheet, View, type ViewProps } from 'react-native';
+import { Keyboard,Platform, KeyboardEvent,StyleSheet, View, type ViewProps } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { X } from '@/lib/icons/X';
 import { cn } from '@/lib/utils';
+
+import { useEffect, useState } from 'react';
 
 const Dialog = DialogPrimitive.Root;
 
@@ -36,6 +38,32 @@ const DialogOverlayNative = React.forwardRef<
   DialogPrimitive.OverlayRef,
   DialogPrimitive.OverlayProps
 >(({ className, children, ...props }, ref) => {
+   const [keyboardOffset, setKeyboardOffset] = useState<number>(0);
+
+   useEffect(() => {
+    const onKeyboardShow = (e: KeyboardEvent) => {
+      setKeyboardOffset(e.endCoordinates.height);
+    };
+
+    const onKeyboardHide = () => {
+      setKeyboardOffset(0);
+    };
+
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      onKeyboardShow
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      onKeyboardHide
+    );
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   return (
     <DialogPrimitive.Overlay
       style={StyleSheet.absoluteFill}
@@ -43,9 +71,15 @@ const DialogOverlayNative = React.forwardRef<
       {...props}
       ref={ref}
     >
-      <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(150)}>
-        <>{children}</>
-      </Animated.View>
+       <Animated.View
+    entering={FadeIn.duration(150)}
+    exiting={FadeOut.duration(150)}
+    style={{
+      marginBottom: keyboardOffset > 0 ? keyboardOffset : 0,
+    }}
+  >
+    <>{children}</>
+  </Animated.View>
     </DialogPrimitive.Overlay>
   );
 });

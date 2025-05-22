@@ -64,7 +64,7 @@ export function Combobox({
         </Pressable>
       </DialogTrigger>
 
-      <DialogContent className="w-[90vw] gap-2 max-w-screen-md sm:max-w-screen-sm p-4">
+      <DialogContent className="w-[90vw] max-h-[50vh] gap-2 max-w-screen-md sm:max-w-screen-sm p-4">
         <View className="space-y-3 pt-10">
           <View className="relative">
             <Input
