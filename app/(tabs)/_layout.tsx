@@ -2,21 +2,33 @@
 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{
-       tabBarActiveTintColor: 'blue' ,
+    <SafeAreaView style={{ flex: 1 }}>
+    <Tabs
+    screenOptions={{
+      tabBarActiveTintColor: 'blue',
       headerShown: false,
       tabBarStyle: {
-        height: 90, 
-        paddingBottom: 8, 
-        paddingTop: 4, 
+        height: 64, 
+        paddingBottom: 8,
+        paddingTop: 4,
+        position: 'relative', 
+        borderTopWidth: 0.5, 
+        elevation: 0, 
+        shadowOpacity: 0, 
       },
       tabBarLabelStyle: {
-        fontSize: 12, 
+        fontSize: 12,
+        marginBottom: 4,
       },
-    }}>
+      tabBarItemStyle: {
+        height: 48, 
+      },
+    }}
+  >
       <Tabs.Screen
         name="index"
         options={{
@@ -46,5 +58,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    </SafeAreaView>
   );
 }
