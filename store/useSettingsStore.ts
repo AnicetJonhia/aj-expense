@@ -63,9 +63,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
         const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
         const hasReminder = scheduledNotifications.some(n => 
           n.content.title === "💸 Daily Reminder" &&
-          n.content.body === "Don't forget to log your expenses today!" &&
-            n.trigger.hour === parsedTime.hour &&
-        n.trigger.minute === parsedTime.minute
+          n.content.body === "Don't forget to log your expenses today!" 
         );
         
         if (!hasReminder) {
