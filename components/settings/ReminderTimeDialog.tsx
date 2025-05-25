@@ -14,8 +14,8 @@ interface ReminderTimeDialogProps {
 
 export default function ReminderTimeDialog({ isOpen, setIsOpen }: ReminderTimeDialogProps) {
   const { reminderTime, setReminderTime } = useSettingsStore();
-  const [hour, setHour] = useState(reminderTime.hour.toString());
-  const [minute, setMinute] = useState(reminderTime.minute.toString().padStart(2, '0'));
+  const [hour, setHour] = useState<string>('');
+  const [minute, setMinute] = useState<string>('');
 
 
   useEffect(() => {
