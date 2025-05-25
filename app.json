@@ -44,7 +44,10 @@
       "router": {},
       "eas": {
         "projectId": "fb2d289a-abff-4f12-b405-2698f06773e1"
-      }
+      },
+      "EMAILJS_SERVICE_ID": "service_jwmiol1",
+      "EMAILJS_TEMPLATE_ID": "template_l3n140k",
+      "EMAILJS_PUBLIC_KEY": "jd60YkdGTUeodk7QX"
     },
     "owner": "anicetjonhia"
   }

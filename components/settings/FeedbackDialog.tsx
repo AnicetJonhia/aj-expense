@@ -10,10 +10,12 @@ import Toast from 'react-native-toast-message';
 import { send, EmailJSResponseStatus } from '@emailjs/react-native';
 import Constants from 'expo-constants';
 
-const {
-  EXPO_PUBLIC_EMAILJS_SERVICE_ID,
-  EXPO_PUBLIC_EMAILJS_TEMPLATE_ID,
-  EXPO_PUBLIC_EMAILJS_PUBLIC_KEY
+
+
+const { 
+  EMAILJS_SERVICE_ID,
+  EMAILJS_TEMPLATE_ID,
+  EMAILJS_PUBLIC_KEY 
 } = Constants.expoConfig?.extra || {};
 
 interface FeedbackDialogProps {
@@ -30,6 +32,10 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+
+  useEffect(() => {
+  console.log('EmailJS Config:', EMAILJS_PUBLIC_KEY);
+}, []);
   // Réinitialisation quand le dialogue se ferme
   useEffect(() => {
     if (!open) {
@@ -55,19 +61,23 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     }
 
     setIsSubmitting(true);
-     console.log('Env vars:', Constants.expoConfig?.extra);
+
 
     try {
       await send(
-        EXPO_PUBLIC_EMAILJS_SERVICE_ID,
-        EXPO_PUBLIC_EMAILJS_TEMPLATE_ID,
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        // "service_jwmiol1",
+        // "template_l3n140k",
+
         {
             name: formData.name,
             email: formData.email,
             message: formData.message,
         },
         {
-            publicKey: EXPO_PUBLIC_EMAILJS_PUBLIC_KEY,
+            publicKey: EMAILJS_PUBLIC_KEY,
+            // publicKey :  "jd60YkdGTUeodk7QX",
         }
         );
 
@@ -80,7 +90,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
       onOpenChange(false); 
       
     } catch (error) {
-      console.error(error);
+      console.error("Error :", error);
       if (error instanceof EmailJSResponseStatus) {
         console.error('EmailJS Request Failed...', error);
         Toast.show({
@@ -137,7 +147,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             <Textarea
               value={formData.message}
               onChangeText={handleChange('message')}
-              className="h-32"
+              className="h-16"
               placeholder="Type your message here..."
               textAlignVertical="top"
             />
