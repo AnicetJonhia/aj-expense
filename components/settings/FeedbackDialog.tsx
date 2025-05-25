@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
 import { Textarea } from '@/components/ui/textarea';
 import Toast from 'react-native-toast-message';
+import { send, EmailJSResponseStatus } from '@emailjs/react-native';
+import Constants from 'expo-constants';
+
+const {
+  EXPO_PUBLIC_EMAILJS_SERVICE_ID,
+  EXPO_PUBLIC_EMAILJS_TEMPLATE_ID,
+  EXPO_PUBLIC_EMAILJS_PUBLIC_KEY
+} = Constants.expoConfig?.extra || {};
 
 interface FeedbackDialogProps {
   open: boolean;
@@ -14,11 +22,21 @@ interface FeedbackDialogProps {
 }
 
 export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Réinitialisation quand le dialogue se ferme
+  useEffect(() => {
+    if (!open) {
+      setFormData({ name: '', email: '', message: '' });
+      setErrors({});
+    }
+  }, [open]);
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -27,9 +45,9 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const handleSubmit = async () => {
     const newErrors: Record<string, string> = {};
 
-    if (!name.trim()) newErrors.name = 'Name is required';
-    if (!validateEmail(email)) newErrors.email = 'Invalid email address';
-    if (!message.trim()) newErrors.message = 'Message is required';
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!validateEmail(formData.email)) newErrors.email = 'Invalid email address';
+    if (!formData.message.trim()) newErrors.message = 'Message is required';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -37,26 +55,21 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     }
 
     setIsSubmitting(true);
+    console.log(EXPO_PUBLIC_EMAILJS_SERVICE_ID)
 
     try {
-      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      await send(
+        EXPO_PUBLIC_EMAILJS_SERVICE_ID,
+        EXPO_PUBLIC_EMAILJS_TEMPLATE_ID,
+        {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
         },
-        body: JSON.stringify({
-          service_id: process.env.EMAILJS_SERVICE_ID,
-          template_id: process.env.EMAILJS_TEMPLATE_ID,
-          user_id: process.env.EMAILJS_PUBLIC_KEY,
-          template_params: {
-            name,
-            email,
-            message,
-          }
-        })
-      });
-
-      if (!response.ok) throw new Error('Failed to send email');
+        {
+            publicKey: EXPO_PUBLIC_EMAILJS_PUBLIC_KEY,
+        }
+        );
 
       Toast.show({
         type: 'success',
@@ -64,14 +77,10 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
         text2: "Message sent successfully! I'll get back to you soon."
       });
 
-      // Reset form
-      setName('');
-      setEmail('');
-      setMessage('');
-      setErrors({});
-      onOpenChange(false);
+      onOpenChange(false); 
+      
     } catch (error) {
-        console.log(error);
+      console.error(error);
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -80,6 +89,11 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleChange = (field: keyof typeof formData) => (text: string) => {
+    setFormData(prev => ({ ...prev, [field]: text }));
+    setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
   return (
@@ -93,11 +107,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
           <View>
             <Label>Name *</Label>
             <Input
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                setErrors(prev => ({ ...prev, name: '' }));
-              }}
+              value={formData.name}
+              onChangeText={handleChange('name')}
             />
             {errors.name && <Text className="text-red-500 text-sm mt-1">{errors.name}</Text>}
           </View>
@@ -107,11 +118,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             <Input
               keyboardType="email-address"
               autoCapitalize="none"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setErrors(prev => ({ ...prev, email: '' }));
-              }}
+              value={formData.email}
+              onChangeText={handleChange('email')}
             />
             {errors.email && <Text className="text-red-500 text-sm mt-1">{errors.email}</Text>}
           </View>
@@ -119,11 +127,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
           <View>
             <Label>Message *</Label>
             <Textarea
-              value={message}
-              onChangeText={(text) => {
-                setMessage(text);
-                setErrors(prev => ({ ...prev, message: '' }));
-              }}
+              value={formData.message}
+              onChangeText={handleChange('message')}
               className="h-32"
               placeholder="Type your message here..."
               textAlignVertical="top"
