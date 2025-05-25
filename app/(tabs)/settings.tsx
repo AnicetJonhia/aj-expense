@@ -12,6 +12,7 @@ import ThresholdDialog from '@/components/settings/ThresholdDialog';
 import ReminderTimeDialog from '@/components/settings/ReminderTimeDialog';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { requestNotificationPermissions } from '@/services/notifications';
+import { FeedbackDialog } from '@/components/settings/FeedbackDialog';
 
 export default function SettingsScreen() {
   const { fetchExpenses } = useExpenseStore();
@@ -33,6 +34,7 @@ export default function SettingsScreen() {
   const [thresholdOpen, setThresholdOpen] = useState<boolean>(false);
   const [reminderTimeOpen, setReminderTimeOpen] = useState<boolean>(false);
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
+   const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setIsDark(colorScheme === 'dark')
@@ -223,7 +225,7 @@ export default function SettingsScreen() {
         {/* Support Section */}
         <Text className="text-lg font-semibold text-primary mt-6 mb-2">Support</Text>
         <View className="gap-2 mb-8">
-          <Button variant="outline">
+          <Button variant="outline" onPress={() => setFeedbackOpen(true)}>
             <Text>Send Feedback</Text>
           </Button>
           <Button variant="outline">
@@ -256,6 +258,11 @@ export default function SettingsScreen() {
       <ExportDialog
         isOpen={exportOpen}
         setIsOpen={setExportOpen}
+      />
+
+        <FeedbackDialog 
+        open={feedbackOpen} 
+        onOpenChange={setFeedbackOpen} 
       />
     </>
   );
