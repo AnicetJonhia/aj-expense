@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import DateFilter from '@/components/DateFilter';
+import DateFilter from '@/components/expenses/DateFilter';
 
 interface DateFilterDialogProps {
   isOpen: boolean;

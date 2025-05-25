@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 
-export default function GlobalDashboard() {
+export default function Global() {
   const { items, fetchExpenses } = useExpenseStore();
   const [totals, setTotals] = useState({
     year: 0,

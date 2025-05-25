@@ -10,12 +10,12 @@ import { FontAwesome } from '@expo/vector-icons';
 
 type ComboboxItem = { label: string; value: string };
 
-interface DashboardCategoryFilterProps {
+interface CategoryFilterProps {
   /** dateString au format "" | "YYYY" | "YYYY-MM" | "YYYY-MM-DD" */
   dateString: string;
 }
 
-export default function DashboardCategoryFilter({ dateString }: DashboardCategoryFilterProps) {
+export default function CategoryFilter({ dateString }: CategoryFilterProps) {
   const { items } = useExpenseStore();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 

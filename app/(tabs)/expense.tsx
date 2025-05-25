@@ -7,22 +7,23 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 import { format } from 'date-fns';
 
-import { useEffect , useState, useMemo} from 'react';
-import { FlatList, View ,TouchableOpacity ,Keyboard } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { FlatList, Keyboard, TouchableOpacity, View } from 'react-native';
 
 import TabHeader from "@/components/TabHeader";
-import ExpenseDeleteDialog from "@/components/ExpenseDeleteDialog";
+import DateFilterDialog from '@/components/expenses/DateFilterDialog';
+import ExpenseDeleteDialog from "@/components/expenses/ExpenseDeleteDialog";
+import ExpenseEditDialog from "@/components/expenses/ExpenseEditDialog";
+import MissingExpense from "@/components/expenses/MissingExpense";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Toast from 'react-native-toast-message';
-import ExpenseEditDialog from "@/components/ExpenseEditDialog";
-import MissingExpense from "@/components/MissingExpense";
-import {Input} from "@/components/ui/input"
-import DateFilterDialog from '@/components/DateFilterDialog';
-import {Button} from "@/components/ui/button"
 
 
-import { formatDate, extractDateParts } from "@/utils/formatDate";
+import { extractDateParts, formatDate } from "@/utils/formatDate";
 
 
+import { AddExpenseDialog } from "@/components/AddExpenseDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { AddExpenseDialog } from "@/components/AddExpenseDialog";
 
 type Expense = {
   id: number;
@@ -54,15 +54,6 @@ const [selectedDate, setSelectedDate] = useState<string>('');
 const [isOpen, setIsOpen] = useState<boolean>(false);
 const [selectedCategory, setSelectedCategory] = useState<string>('');
 const [isAddOpen, setIsAddOpen] = useState<boolean>(false);
-
-
-
-
-  
-
-
-  
-
 
   useEffect(() => {
     fetchExpenses();

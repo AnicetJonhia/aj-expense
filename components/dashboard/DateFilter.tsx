@@ -7,11 +7,11 @@ import { format } from 'date-fns'
 import { Combobox } from '@/components/ui/combobox'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 
-interface DashboardDateFilterProps {
+interface DateFilterProps {
   onChange: (dateString: string) => void
 }
 
-export default function DashboardDateFilter({ onChange }: DashboardDateFilterProps) {
+export default function DateFilter({ onChange }: DateFilterProps) {
   const { items, fetchExpenses } = useExpenseStore()
 
   const [year, setYear]   = useState<string>('all')
