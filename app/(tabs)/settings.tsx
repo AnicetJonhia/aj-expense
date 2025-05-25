@@ -55,7 +55,7 @@ export default function SettingsScreen() {
 
   const handleDailyReminder = async (enabled: boolean) => {
     if (Platform.OS === 'web') {
-      Alert.alert('Notifications are not supported on web');
+      Alert.alert('Notifications are not supported on web.');
       return;
     }
     
