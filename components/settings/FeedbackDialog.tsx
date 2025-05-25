@@ -55,7 +55,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     }
 
     setIsSubmitting(true);
-    console.log(EXPO_PUBLIC_EMAILJS_SERVICE_ID)
+     console.log('Env vars:', Constants.expoConfig?.extra);
 
     try {
       await send(
