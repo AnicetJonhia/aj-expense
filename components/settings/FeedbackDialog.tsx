@@ -81,6 +81,14 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
       
     } catch (error) {
       console.error(error);
+      if (error instanceof EmailJSResponseStatus) {
+        console.error('EmailJS Request Failed...', error);
+        Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'EmailJS Request Failed...'+ error
+      });
+      }
       Toast.show({
         type: 'error',
         text1: 'Error',
