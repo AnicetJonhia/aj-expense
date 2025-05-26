@@ -33,10 +33,9 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
-  useEffect(() => {
-  console.log('EmailJS Config:', EMAILJS_PUBLIC_KEY);
-}, []);
-  // Réinitialisation quand le dialogue se ferme
+  
+  
+  
   useEffect(() => {
     if (!open) {
       setFormData({ name: '', email: '', message: '' });
