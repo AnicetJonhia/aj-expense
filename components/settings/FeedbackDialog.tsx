@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -7,16 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
 import { Textarea } from '@/components/ui/textarea';
 import Toast from 'react-native-toast-message';
-import { send, EmailJSResponseStatus } from '@emailjs/react-native';
-import Constants from 'expo-constants';
 
 
 
-const { 
-  EMAILJS_SERVICE_ID,
-  EMAILJS_TEMPLATE_ID,
-  EMAILJS_PUBLIC_KEY 
-} = Constants.expoConfig?.extra || {};
+
+
 
 interface FeedbackDialogProps {
   open: boolean;
@@ -34,7 +31,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
 
 
   
-  
+ 
+
   
   useEffect(() => {
     if (!open) {
@@ -63,23 +61,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
 
 
     try {
-      await send(
-        EMAILJS_SERVICE_ID!,
-        EMAILJS_TEMPLATE_ID!,
-        // "service_jwmiol1",
-        // "template_l3n140k",
-
-        {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-        },
-        EMAILJS_PUBLIC_KEY!
-        // {
-        //     publicKey: EMAILJS_PUBLIC_KEY!,
-        //     // publicKey :  "jd60YkdGTUeodk7QX",
-        // }
-        );
+       
+      console.log("test mail")
 
       Toast.show({
         type: 'success',
@@ -91,14 +74,14 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
       
     } catch (error) {
       console.error("Error :", error);
-      if (error instanceof EmailJSResponseStatus) {
-        console.error('EmailJS Request Failed...', error);
-        Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'EmailJS Request Failed...'+ error
-      });
-      }
+      // if (error instanceof EmailJSResponseStatus) {
+      //   console.error('EmailJS Request Failed...', error);
+      //   Toast.show({
+      //   type: 'error',
+      //   text1: 'Error',
+      //   text2: 'EmailJS Request Failed...'+ error
+      // });
+      // }
       Toast.show({
         type: 'error',
         text1: 'Error',
