@@ -13,6 +13,10 @@ import ReminderTimeDialog from '@/components/settings/ReminderTimeDialog';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { requestNotificationPermissions } from '@/services/notifications';
 import { FeedbackDialog } from '@/components/settings/FeedbackDialog';
+import { Linking } from 'react-native';
+
+
+
 
 export default function SettingsScreen() {
   const { fetchExpenses } = useExpenseStore();
@@ -128,6 +132,11 @@ export default function SettingsScreen() {
     return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
   };
 
+  const openGoogleForm = () => {
+  Linking.openURL('https://docs.google.com/forms/d/e/…/viewform');
+  
+};
+
   return (
     <>
     <View className="flex-1 p-4 gap-4 bg-white dark:bg-black">
@@ -228,7 +237,7 @@ export default function SettingsScreen() {
           <Button variant="outline" onPress={() => setFeedbackOpen(true)}>
             <Text>Send Feedback</Text>
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onPress={openGoogleForm}>
             <Text>Privacy Policy</Text>
           </Button>
           <Button variant="outline">
