@@ -16,6 +16,8 @@ export default function RootLayout() {
 
   useFrameworkReady();
 
+  
+
   return (
     <ThemeProvider>
       <StatusBar translucent style="auto" />

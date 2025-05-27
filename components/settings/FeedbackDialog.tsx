@@ -64,8 +64,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
 
     try {
       await send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
+        EMAILJS_SERVICE_ID!,
+        EMAILJS_TEMPLATE_ID!,
         // "service_jwmiol1",
         // "template_l3n140k",
 
@@ -74,10 +74,11 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             email: formData.email,
             message: formData.message,
         },
-        {
-            publicKey: EMAILJS_PUBLIC_KEY,
-            // publicKey :  "jd60YkdGTUeodk7QX",
-        }
+        EMAILJS_PUBLIC_KEY!
+        // {
+        //     publicKey: EMAILJS_PUBLIC_KEY!,
+        //     // publicKey :  "jd60YkdGTUeodk7QX",
+        // }
         );
 
       Toast.show({

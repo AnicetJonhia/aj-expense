@@ -19,12 +19,11 @@ export default function TabLayout() {
         paddingBottom: 8,
         paddingTop: 4,
         position: 'relative', 
-        borderTopWidth: 1, 
+        borderTopWidth: 2, 
       
         elevation: 0, 
         shadowOpacity: 0, 
-         borderTopLeftRadius: 12,
-        borderTopRightRadius:12,
+
         
       },
       tabBarLabelStyle: {
