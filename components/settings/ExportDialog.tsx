@@ -124,52 +124,62 @@ export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; s
 
 
   const handleExportCSV = async () => {
-    try {
-      const dateNow = format(new Date(), 'yyyy-MM-dd');
-      const fileName = `AJExpenseExportData_${dateNow}.csv`;
-      const newPath = `${FileSystem.cacheDirectory}${fileName}`;
-       const message = `Data Export to ${String(fileName || 'your file')}`;
+  try {
+    const dateNow = format(new Date(), 'yyyy-MM-dd');
+    const fileName = `AJExpenseExportData_${dateNow}.csv`;
+    const newPath = `${FileSystem.cacheDirectory}${fileName}`;
 
-      // Échappement des guillemets
-      const escapeQuotes = (str: string) => `"${str.replace(/"/g, '""')}"`;
+    // BOM UTF-8 pour Excel
+    const BOM = '\uFEFF';
 
-      const csvHeader = 'Date,Title,Category,Amount\n';
-      const csvRows = filtered.map(e => 
+    // Échappement des guillemets dans chaque champ
+    const escapeField = (str: string) => `"${str.replace(/"/g, '""')}"`;
+
+    // En-tête avec séparateur virgule
+    const csvHeader = ['Date', 'Title', 'Category', 'Amount'].join(',') + '\n';
+
+    // Lignes de données
+    const csvRows = filtered
+      .map(e =>
         [
           format(new Date(e.date), 'yyyy-MM-dd'),
-          escapeQuotes(e.title),
-          escapeQuotes(e.category),
-          e.amount
+          escapeField(e.title),
+          escapeField(e.category),
+          e.amount.toString()
         ].join(',')
-      ).join('\n');
+      )
+      .join('\n');
 
-      const csvContent = csvHeader + csvRows;
+    // Contenu final = BOM + header + rows
+    const csvContent = BOM + csvHeader + csvRows;
 
-      await FileSystem.writeAsStringAsync(newPath, csvContent, {
-        encoding: FileSystem.EncodingType.UTF8
-      });
+    // On écrit le fichier en UTF-8
+    await FileSystem.writeAsStringAsync(newPath, csvContent, {
+      encoding: FileSystem.EncodingType.UTF8
+    });
 
-      await Sharing.shareAsync(newPath, {
-        mimeType: 'text/csv',
-        dialogTitle: `Export CSV - ${dateNow}`,
-      });
-       setIsOpen(false);
-      Toast.show({
-        type: 'success',
-        text1:  String(message),
-        text2: "Your expenses were successfully exported"
-      });
+    // On déclenche le partage
+    await Sharing.shareAsync(newPath, {
+      mimeType: 'text/csv',
+      dialogTitle: `Export CSV - ${dateNow}`,
+    });
 
+    setIsOpen(false);
+    Toast.show({
+      type: 'success',
+      text1: `Data Export to ${fileName}`,
+      text2: 'Your expenses were successfully exported'
+    });
+  } catch (error) {
+    setIsOpen(false);
+    Toast.show({
+      type: 'error',
+      text1: 'Export Failed',
+      text2: error instanceof Error ? error.message : String(error)
+    });
+  }
+};
 
-    } catch (error) {
-       setIsOpen(false);
-      Toast.show({
-        type: 'error',
-        text1: 'Export Failed',
-        text2: error instanceof Error ? error.message : String(error)
-      });
-    }
-  };
 
 
   

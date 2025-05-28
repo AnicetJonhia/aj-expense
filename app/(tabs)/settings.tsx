@@ -18,6 +18,7 @@ import InfoDialog from "@/components/settings/InfoDialog";
 import Constants from 'expo-constants';
 
 
+
 export default function SettingsScreen() {
   const { fetchExpenses } = useExpenseStore();
   const { 
