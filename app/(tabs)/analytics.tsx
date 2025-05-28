@@ -60,7 +60,7 @@ export default function AnalyticsScreen() {
   const extractTop = (catTotals: CategoryTotals) => {
     const entries = Object.entries(catTotals);
     const total = entries.reduce((sum, [, v]) => sum + v, 0);
-    if (!entries.length || total === 0) return { category: '—', data: [0] };
+    if (!entries.length || total === 0) return { category: '', data: [0] };
     const [topCat, topVal] = entries.sort((a, b) => b[1] - a[1])[0];
     return { category: topCat, data: [topVal / total] };
   };
@@ -130,7 +130,7 @@ export default function AnalyticsScreen() {
                   />
                 </View>
                 <Text className="mt-2 text-center font-bold text-gray-800 dark:text-gray-200">
-                  {pct}% of spend in {category}
+                  {pct}% {category}
                 </Text>
               </View>
             );

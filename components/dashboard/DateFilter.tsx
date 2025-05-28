@@ -121,7 +121,7 @@ export default function DateFilter({ onChange }: DateFilterProps) {
       <Text className="text-2xl font-bold mb-2">Filter by date</Text>
 
       {/* Year */}
-      <View className="mb-4">
+      <View className="mb-2">
         <Text className="text-sm mb-1 text-gray-600 dark:text-gray-400">
           Year
         </Text>
