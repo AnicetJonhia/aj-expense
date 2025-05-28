@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "ajexpense",
     "userInterfaceStyle": "automatic",
-
     "ios": {
       "supportsTablet": true
     },
@@ -35,7 +34,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-mail-composer"
     ],
     "experiments": {
       "typedRoutes": true

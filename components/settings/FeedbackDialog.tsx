@@ -1,7 +1,6 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
+import * as MailComposer from 'expo-mail-composer';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,11 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
 import { Textarea } from '@/components/ui/textarea';
 import Toast from 'react-native-toast-message';
-
-
-
-
-
 
 interface FeedbackDialogProps {
   open: boolean;
@@ -29,11 +23,6 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-  
- 
-
-  
   useEffect(() => {
     if (!open) {
       setFormData({ name: '', email: '', message: '' });
@@ -41,51 +30,56 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     }
   }, [open]);
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async () => {
+    // Validation
     const newErrors: Record<string, string> = {};
-
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!validateEmail(formData.email)) newErrors.email = 'Invalid email address';
     if (!formData.message.trim()) newErrors.message = 'Message is required';
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
     setIsSubmitting(true);
-
-
     try {
-       
-      console.log("test mail")
+      const available = await MailComposer.isAvailableAsync();
+      if (!available) {
+        Toast.show({
+          type: 'error',
+          text1: 'Not available',
+          text2: 'Cannot open mail client.'
+        });
+        return;
+      }
+
+      await MailComposer.composeAsync({
+        recipients: ['anicet22.aps2a@gmail.com'],
+        subject: `Feedback from ${formData.name}`,
+        body: `
+Name: ${formData.name}
+Email: ${formData.email}
+
+Message:
+${formData.message}
+        `,
+      });
 
       Toast.show({
         type: 'success',
-        text1: 'Success',
-        text2: "Message sent successfully! I'll get back to you soon."
+        text1: 'Ready to send',
+        text2: 'Mail composer opened.'
       });
-
-      onOpenChange(false); 
-      
+      onOpenChange(false);
     } catch (error) {
-      console.error("Error :", error);
-      // if (error instanceof EmailJSResponseStatus) {
-      //   console.error('EmailJS Request Failed...', error);
-      //   Toast.show({
-      //   type: 'error',
-      //   text1: 'Error',
-      //   text2: 'EmailJS Request Failed...'+ error
-      // });
-      // }
+      console.error('MailComposer error:', error);
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Failed to send message. Please try again later.'
+        text2: 'An error occurred.'
       });
     } finally {
       setIsSubmitting(false);
@@ -153,7 +147,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
               onPress={handleSubmit}
               disabled={isSubmitting}
             >
-              <Text>{isSubmitting ? 'Sending...' : 'Send'}</Text>
+              <Text>{isSubmitting ? 'Opening...' : 'Send'}</Text>
             </Button>
           </View>
         </DialogFooter>
