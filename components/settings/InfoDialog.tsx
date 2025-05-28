@@ -34,7 +34,7 @@ export default function InfoDialog({ open, onOpenChange, title, content }: InfoD
               <TouchableOpacity onPress={() => handleLink('https://www.linkedin.com/in/anicet-jonhia-randrianambinina-266628244/')}>
                  <Text> <FontAwesome name="linkedin" size={20} /></Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleLink('https://www.facebook.com/anicet22')}>
+              <TouchableOpacity onPress={() => handleLink('https://www.facebook.com/anicet.jonhia/')}>
                  <Text> <FontAwesome name="facebook" size={20} /></Text>
               </TouchableOpacity>
             </View>
