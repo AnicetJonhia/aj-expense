@@ -14,7 +14,7 @@ interface InfoDialogProps {
 export default function InfoDialog({ open, onOpenChange, title, content }: InfoDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[85vw] max-w-screen-sm">
+      <DialogContent className="w-[90vw] max-w-screen-sm">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

@@ -154,7 +154,7 @@ export default function SettingsScreen() {
         break;
       case 'about':
         title = 'About the Developer';
-        content = `Developed by Tokiniaina Jean Anicet Jonhia.\nContact: anicet22.aps2a@gmail.com`;
+        content = `Developed by Anicet Jonhia.\nContact: anicet22.aps2a@gmail.com`;
         break;
     }
     setInfoDialogTitle(title);
@@ -270,7 +270,7 @@ export default function SettingsScreen() {
               <Text>App Version</Text>
             </Button>
             <Button variant="outline" onPress={() => showInfo('about')}>
-              <Text>About</Text>
+              <Text>About/Author</Text>
             </Button>
         </View>
       </ScrollView>
