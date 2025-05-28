@@ -154,7 +154,7 @@ export default function SettingsScreen() {
         break;
       case 'about':
         title = 'About the Developer';
-        content = `Developed by Anicet Jonhia.\nContact: anicet22.aps2a@gmail.com`;
+        content = `Developed by Anicet Jonhia.\nContact: anicet22.aps2a@gmail.com\nTel: +261 34 48 224 12`;
         break;
     }
     setInfoDialogTitle(title);
