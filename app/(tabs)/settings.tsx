@@ -13,9 +13,9 @@ import ReminderTimeDialog from '@/components/settings/ReminderTimeDialog';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { requestNotificationPermissions } from '@/services/notifications';
 import { FeedbackDialog } from '@/components/settings/FeedbackDialog';
-import { Linking } from 'react-native';
 
-
+import InfoDialog from "@/components/settings/InfoDialog";
+import Constants from 'expo-constants';
 
 
 export default function SettingsScreen() {
@@ -40,6 +40,11 @@ export default function SettingsScreen() {
   const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
    const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false);
 
+
+
+   const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
+  const [infoDialogContent, setInfoDialogContent] = useState<string>('');
+  const [infoDialogTitle, setInfoDialogTitle] = useState<string>('');
   useEffect(() => {
     setIsDark(colorScheme === 'dark')
   }, [colorScheme]);
@@ -132,10 +137,31 @@ export default function SettingsScreen() {
     return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
   };
 
-  const openGoogleForm = () => {
-  Linking.openURL('https://docs.google.com/forms/d/e/…/viewform');
+
+
+
+  const showInfo = (type: 'privacy' | 'version' | 'about') => {
+    let title = '';
+    let content = '';
+    switch (type) {
+      case 'privacy':
+        title = 'Privacy Policy';
+        content = `We collect only the data you enter in the feedback form (name, email, message).\nThis data is used only to generate an email and is not stored or shared.\nContact: anicet22.aps2a@gmail.com.`;
+        break;
+      case 'version':
+        title = 'App Version';
+        content = `Version: ${Constants.manifest?.version || '1.0.0'}\nBuild: ${Constants.manifest?.revisionId || '100'}\nUpdated: May 28, 2025`;
+        break;
+      case 'about':
+        title = 'About the Developer';
+        content = `Developed by Tokiniaina Jean Anicet Jonhia.\nContact: anicet22.aps2a@gmail.com`;
+        break;
+    }
+    setInfoDialogTitle(title);
+    setInfoDialogContent(content);
+    setInfoDialogOpen(true);
+  };
   
-};
 
   return (
     <>
@@ -237,12 +263,15 @@ export default function SettingsScreen() {
           <Button variant="outline" onPress={() => setFeedbackOpen(true)}>
             <Text>Send Feedback</Text>
           </Button>
-          <Button variant="outline" onPress={openGoogleForm}>
-            <Text>Privacy Policy</Text>
-          </Button>
-          <Button variant="outline">
-            <Text>App Version</Text>
-          </Button>
+             <Button variant="outline" onPress={() => showInfo('privacy')}>
+              <Text>Privacy Policy</Text>
+            </Button>
+            <Button variant="outline" onPress={() => showInfo('version')}>
+              <Text>App Version</Text>
+            </Button>
+            <Button variant="outline" onPress={() => showInfo('about')}>
+              <Text>About</Text>
+            </Button>
         </View>
       </ScrollView>
 
@@ -273,6 +302,15 @@ export default function SettingsScreen() {
         open={feedbackOpen} 
         onOpenChange={setFeedbackOpen} 
       />
+
+
+
+    <InfoDialog
+      open={infoDialogOpen}
+      onOpenChange={setInfoDialogOpen}
+      title={infoDialogTitle}
+      content={infoDialogContent}
+    />
     </>
   );
 }
