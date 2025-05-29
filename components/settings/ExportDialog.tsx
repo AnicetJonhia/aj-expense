@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View } from 'react-native';
-import { Dialog,DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Dialog,DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { Combobox } from '@/components/ui/combobox';
@@ -51,6 +51,8 @@ export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; s
     )).sort((a,b) => a - b);
     return days.map(d => ({ label: String(d), value: String(d).padStart(2,'0') }));
   }, [items, year, month]);
+
+  
 
   // Filter items
   const filtered = useMemo(() => {
@@ -128,6 +130,7 @@ export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; s
     const dateNow = format(new Date(), 'yyyy-MM-dd');
     const fileName = `AJExpenseExportData_${dateNow}.csv`;
     const newPath = `${FileSystem.cacheDirectory}${fileName}`;
+    const message = `Data Export to ${fileName}`
 
     // BOM UTF-8 pour Excel
     const BOM = '\uFEFF';
@@ -167,7 +170,7 @@ export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; s
     setIsOpen(false);
     Toast.show({
       type: 'success',
-      text1: `Data Export to ${fileName}`,
+      text1: String(message),
       text2: 'Your expenses were successfully exported'
     });
   } catch (error) {
@@ -190,7 +193,11 @@ export default function ExportDialog({ isOpen, setIsOpen }: { isOpen: boolean; s
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       
       <DialogContent className="w-[90vw] max-w-screen-md sm:max-w-screen-sm p-4">
-        <DialogHeader><DialogTitle>Export Expenses</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>
+            <Text>Export Expenses</Text>
+          </DialogTitle>
+          </DialogHeader>
         <View className="flex-row gap-2">
           <View className='flex-1'>
           <Combobox  items={yearOptions} selectedItem={yearOptions.find(y=>y.value===year)||null} onSelectedItemChange={opt=>{setYear(opt.value); setMonth(null); setDay(null);}} placeholder="Year" />

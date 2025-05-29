@@ -89,7 +89,7 @@ export function Combobox({
                   padding: 4,
                 }}
               >
-                <FontAwesome name="times-circle" size={20} color="gray" />
+                <Text><FontAwesome name="times-circle" size={20} color="gray" /></Text>
               </Pressable>
             ) : (
               <View

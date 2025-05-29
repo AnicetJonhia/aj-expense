@@ -86,7 +86,7 @@ export default function AnalyticsScreen() {
     backgroundColor: 'transparent',
     backgroundGradientFrom: isDark ? '#27272A' : '#F4F4F5', // zinc‐800 / zinc‐100
     backgroundGradientTo:   isDark ? '#27272A' : '#F4F4F5',
-    decimalPlaces: 1,
+    decimalPlaces: 0,
     color:       (op = 1) => isDark ? `rgba(107,114,128,${op})` : `rgba(59,130,246,${op})`,
     labelColor:  (op = 1) => isDark ? `rgba(107,114,128,${op})` : `rgba(59,130,246,${op})`,
   };
