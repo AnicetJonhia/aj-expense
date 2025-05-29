@@ -115,7 +115,7 @@ export function AddExpenseDialog({ isOpen, setIsOpen }: AddExpenseDialogProps) {
             className={`w-full ${!isFormValid ? 'opacity-50' : ''}`}
           >
             <View className="flex-row items-center gap-2">
-              <FontAwesome name="plus" size={16} />
+              <Text><FontAwesome name="plus" size={16} /></Text>
               <Text>Add</Text>
             </View>
           </Button>
