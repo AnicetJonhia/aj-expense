@@ -13,7 +13,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "padding": 18 
       },
       "edgeToEdgeEnabled": true,
       "package": "com.anicetjonhia.AJExpense"
